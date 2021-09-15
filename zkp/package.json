@@ -1,0 +1,20 @@
+{
+  "name": "proof_of_trade",
+  "version": "0.0.1",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "build:circuit:compile": "npx circom circuits/income.circom -o build/circuits/income.json && npx snarkjs info -c build/circuits/income.json",
+    "build:circuit:setup": "npx snarkjs setup --protocol groth -c build/circuits/income.json --pk build/circuits/income_proving_key.json --vk build/circuits/income_verification_key.json",
+    "build:circuit": "mkdir -p build/circuits && npm run build:circuit:compile && npm run build:circuit:setup",
+    "test:circuit": "npm run build:circuit && npx snarkjs calculatewitness -c build/circuits/income.json -i circuits/input.json -w build/circuits/witness.json && npx snarkjs proof -w build/circuits/witness.json --pk build/circuits/income_proving_key.json -p build/circuits/proof.json --pub build/circuits/public.json && npx snarkjs verify --vk build/circuits/income_verification_key.json -p build/circuits/proof.json --pub build/circuits/public.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "circom": "^0.5.45",
+    "circomlib": "^0.5.3",
+    "snarkjs": "^0.4.7"
+  }
+}
