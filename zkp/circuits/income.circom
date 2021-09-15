@@ -1,4 +1,4 @@
-include "tradeHasher.circom";
+include "hashers.circom";
 include "../node_modules/circomlib/circuits/comparators.circom"
 
 template Income(n) {
@@ -38,23 +38,14 @@ template Income(n) {
 
     for (var i = 0; i<n; i++) {
         less[i] = LessThan(136);
-        if (type[i] == 1) { //buy
-            // check sufficient funds
-            less[i].in[0] <-- curUSD[i]; // TODO optimize - 25% constrains
-            less[i].in[1] <-- value[i]*price[i];
-            less[i].out === 0;
+        
+        // check sufficient funds
+        less[i].in[0] <-- curUSD[i]*type[i] - curBTC[i]*(type[i]-1); // buy/sell
+        less[i].in[1] <-- value[i]*price[i]*type[i] - value[i]*(type[i]-1);
+        less[i].out === 0;
 
-            curUSD[i+1] <-- curUSD[i] - value[i]*price[i];
-            curBTC[i+1] <-- curBTC[i] + value[i];
-        } else { //sell 
-            // check sufficient funds
-            less[i].in[0] <-- curBTC[i]; // TODO optimize - 25% constrains
-            less[i].in[1] <-- value[i];
-            less[i].out === 0;
-
-            curUSD[i+1] <-- curUSD[i] + value[i]*price[i];
-            curBTC[i+1] <-- curBTC[i] - value[i];
-        }
+        curUSD[i+1] <-- (curUSD[i] - value[i]*price[i])*type[i] - (curUSD[i] + value[i]*price[i])*(type[i]-1);
+        curBTC[i+1] <-- (curBTC[i] + value[i])*type[i] - (curBTC[i] - value[i])*(type[i]-1);
     }
 
     totalBalance <== curUSD[n] + curBTC[n]*price[n];
