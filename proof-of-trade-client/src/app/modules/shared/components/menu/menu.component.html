@@ -1,0 +1,18 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark m-0">
+    <div class="row w-100 p-0 m-0">
+        <div class="col align-self-center m-0 p-0">
+            <a class="navbar-brand" href="#">Proof of Trade</a>
+        </div>
+
+        <div class="col align-self-center m-0 p-0">
+            <ng-container *ngFor="let state of states">
+                <a  class="btn m-2"
+                    [class.btn-outline-light]="current !== state"
+                    [class.btn-light]="current === state"
+                    (click)="goTo(state)">
+                    I am {{state}}
+                </a>
+            </ng-container>
+        </div>
+    </div>
+</nav>
