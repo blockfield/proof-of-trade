@@ -12,15 +12,7 @@ export class WitnessService {
   constructor() { }
 
   public async prove(witnessProve: WitnessProve): Promise<WitnessProveResult> {
-    return (window as any).witness({
-      "type": [witnessProve.actions[0], witnessProve.actions[1]],
-      "value": [witnessProve.amounts[0], witnessProve.amounts[1]],
-      "salt": [witnessProve.nonces[0], witnessProve.nonces[1]],
-      "previousBalance": [Math.round(witnessProve.balances[0]), Math.round(witnessProve.balances[1])],
-      "previousBalanceHash": witnessProve.previousBalanceHash,
-      "hash": [witnessProve.hashes[0], witnessProve.hashes[1]],
-      "price": [Math.round(witnessProve.prices[0]), Math.round(witnessProve.prices[1]), Math.round(witnessProve.prices[2])]
-  })
+    return (window as any).witness(witnessProve.toParam())
   }
 
   public async verify(verificationKey: any, verifyModel: WitnessVerify, verifyProofModel: WitnessVerifyProof): Promise<boolean> {

@@ -46,7 +46,6 @@ export class ZkService {
         previousBalanceHash = await this.contract.getPrevBalanceHash(address, proofLen - 1)
     }
 
-    // todo is this vorrect model? here and in witnessService.prove() below
     let input = new WitnessProveModel(
       [proofModel.proofs[0].action, proofModel.proofs[1].action],
       [proofModel.proofs[0].amount, proofModel.proofs[1].amount],
