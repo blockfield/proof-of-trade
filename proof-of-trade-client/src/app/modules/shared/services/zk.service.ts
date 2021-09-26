@@ -50,7 +50,7 @@ export class ZkService {
       [proofModel.proofs[0].action, proofModel.proofs[1].action],
       [proofModel.proofs[0].amount, proofModel.proofs[1].amount],
       [proofModel.proofs[0].nonce, proofModel.proofs[1].nonce],
-      [proofModel.usdBalance, proofModel.ethBalance],
+      [Math.round(proofModel.usdBalance), Math.round(proofModel.ethBalance)],
       previousBalanceHash,
       [a.hash, b.hash],
       [Math.round(price_a), Math.round(price_b), Math.round(price_now)]
