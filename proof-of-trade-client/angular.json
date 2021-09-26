@@ -52,7 +52,9 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.less"
             ],
-            "scripts": []
+            "scripts": [
+            ],
+            "allowedCommonJsDependencies": ["crypto"]
           },
           "configurations": {
             "production": {
