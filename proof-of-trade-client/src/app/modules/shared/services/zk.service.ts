@@ -57,8 +57,6 @@ export class ZkService {
       [Math.round(price_a), Math.round(price_b), Math.round(price_now)]
     )
 
-    console.log(input)
-
     const proof = await this.witnessService.prove(input)
     
     await this.contract.addPeriodProof(proof, currentBlock)
