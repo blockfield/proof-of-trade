@@ -1,0 +1,21 @@
+{
+  "name": "proof_of_trade",
+  "version": "0.0.1",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "compile": "mkdir -p build && npx circom ./circuits/income.circom --r1cs --wasm && npm run info && mv income.wasm ./build/income.wasm && mv income.r1cs ./build/income.r1cs",
+    "info": "npx snarkjs r1cs info income.r1cs",
+    "setup": "npx snarkjs zkey new ./build/income.r1cs ./ceremony/powersOfTau28_hez_final_12.ptau ./build/income_00.zkey && npx snarkjs zkey contribute ./build/income_00.zkey ./build/income.zkey && npx snarkjs zkey export verificationkey ./build/income.zkey ./build/verification_key.json && npx snarkjs zkej ./build/income.zkey ./build/proving_key.json",
+    "build": "npm run compile && npm run setup",
+    "test": "npm run build && npx snarkjs wtns calculate ./build/income.wasm ./circuits/input.json ./build/witness.wtns && npx snarkjs wtns export json ./build/witness.wtns ./build/witness.json && npx snarkjs groth16 prove ./build/income.zkey ./build/witness.wtns ./build/proof.json ./build/public.json && npx snarkjs groth16 verify ./build/verification_key.json ./build/public.json ./build/proof.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "circom": "^0.5.45",
+    "circomlib": "^0.5.3",
+    "snarkjs": "^0.4.7"
+  }
+}
