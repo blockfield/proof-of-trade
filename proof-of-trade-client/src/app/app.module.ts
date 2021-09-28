@@ -6,8 +6,8 @@ import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MenuComponent } from './core/components/menu/menu.component';
 import { SharedModule } from './modules/shared/shared.module';
-import { Contract } from './api/ethereum/contract';
-import { MetaMaskProvider } from './core/wallet-providers/meta-mask.provider';
+import { PhantomProvider } from './core/wallet-providers/phantom.provider';
+import { Contract } from './api/solana/contract';
 
 @NgModule({
   declarations: [
@@ -18,7 +18,7 @@ import { MetaMaskProvider } from './core/wallet-providers/meta-mask.provider';
     BrowserModule,
     AppRoutingModule,
     NgbModule,
-    SharedModule.withProviders(Contract, MetaMaskProvider),
+    SharedModule.withProviders(Contract, PhantomProvider),
   ],
   providers: [],
   bootstrap: [AppComponent]

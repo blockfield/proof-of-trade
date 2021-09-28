@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ConnectedEvent } from './core/events/connected.event';
 
 @Component({
@@ -9,17 +9,20 @@ import { ConnectedEvent } from './core/events/connected.event';
 export class AppComponent implements OnInit {
   public title = 'proof-of-trade-client';
   public connectedEvent: ConnectedEvent|undefined = undefined
+  public isAvailable = false
 
   public witness: ArrayBuffer|null = null;
   public provingKey: ArrayBuffer|null = null;
-  // public publicSignals: any;
-  public income: any;
+  public income: object;
+
+  constructor() {}
 
   ngOnInit(): void {
     this.initKeys()
   }
 
   private initKeys(): void {
+    // todo Maybe move to assets service if it works
     fetch("./assets/proving_key.bin").then( (response) => {
       return response.arrayBuffer();
     }).then( (b: ArrayBuffer) => {
@@ -32,15 +35,9 @@ export class AppComponent implements OnInit {
         this.witness = b;
     });
 
-    // fetch("./assets/public.json").then( (response: Response) => {
-    //     return response.json();
-    // }).then( (b: any) => {
-    //     this.publicSignals = b;
-    // });
-
     fetch("./assets/income.json").then( (response: Response) => {
         return response.json();
-    }).then( (b: any) => {
+    }).then( (b: object) => {
         this.income = b;
     });
   }
@@ -49,15 +46,13 @@ export class AppComponent implements OnInit {
     this.connectedEvent = event
 
     if (this.connectedEvent.address) {
-      console.log('connected to metamask: ', this.connectedEvent.address)
+      console.log('connected to phantom: ', this.connectedEvent.address)
       return
     }
 
     if (this.connectedEvent.error) {
-      console.log('connection to metamask failed: ', this.connectedEvent.error)
+      console.log('connection to phantom failed: ', this.connectedEvent.error)
       return
     }
-
-    console.log('something went wrong, refresh page')
   }
 }

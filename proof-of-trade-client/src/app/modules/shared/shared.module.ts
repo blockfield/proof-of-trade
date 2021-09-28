@@ -1,15 +1,11 @@
-import { ModuleWithProviders, NgModule, Provider, Type } from '@angular/core';
-import { Contract as EthContract } from '../../api/ethereum/contract';
+import { ModuleWithProviders, NgModule, Type } from '@angular/core';
 import { SmartContractInterface } from './interfaces/smart-contract.interface';
 import { WalletProviderInterface } from './interfaces/wallet-provider.interface';
 
 
 
 @NgModule({
-  providers: [
-    // { provide: 'SmartContractInterface', useClass: EthContract},
-    // { provide: 'WalletProviderInterface', useClass: EthContract},
-  ]
+  providers: []
 })
 export class SharedModule {
   static withProviders(contract: Type<SmartContractInterface>, walletProvider: Type<WalletProviderInterface>): ModuleWithProviders<SharedModule> {

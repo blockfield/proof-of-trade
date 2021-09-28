@@ -2,7 +2,9 @@ import { Location } from '@angular/common';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { WalletService } from 'src/app/modules/shared/services/wallet.service';
+import { ProviderStatusEnum } from '../../enums/provider-status.enum';
 import { ConnectedEvent } from '../../events/connected.event';
+import { ConnectionModel } from '../../models/connection.model';
 
 @Component({
   selector: 'app-menu',
@@ -15,7 +17,7 @@ export class MenuComponent implements OnInit {
   public states = ["user", "trader"]
   public current: string
 
-  public isConnecting = false
+  public connectionModel = new ConnectionModel(ProviderStatusEnum.DISCONNECTED)
 
   constructor(
     private location: Location,
@@ -27,7 +29,7 @@ export class MenuComponent implements OnInit {
     this.initCurrent(this.location.path())
   }
 
-  public initCurrent(path: string): void {
+  private initCurrent(path: string): void {
     let state = this.states[0]
     if (path) {
       state = path.match(/\/(.*)/)[1]
@@ -49,23 +51,21 @@ export class MenuComponent implements OnInit {
     this.router.navigateByUrl('/'+stateToGo)
   }
 
-  public connectToMetaMask(): void {
-    this.flipConnecting()
+  public connectToProvider(): void {
+    this.connectionModel.setConnectionStatus(ProviderStatusEnum.CONNECTING)
 
     this.walletService.connect().subscribe(
       (account: string) => {
         this.connectedEvent.emit(new ConnectedEvent(account, null))
-        this.flipConnecting()
+        this.connectionModel.setConnectionStatus(ProviderStatusEnum.CONNECTED)
       },
       (error: Error) => {
         this.connectedEvent.emit(new ConnectedEvent(null, error))
-        this.flipConnecting()
+        this.connectionModel.setConnectionStatus(ProviderStatusEnum.DISCONNECTED)
       }
     )
-  }
 
-  private flipConnecting(): void {
-    this.isConnecting = !this.isConnecting
+    return
   }
 
 }

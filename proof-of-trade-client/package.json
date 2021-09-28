@@ -21,7 +21,7 @@
     "@angular/platform-browser-dynamic": "~12.2.5",
     "@angular/router": "~12.2.5",
     "@ng-bootstrap/ng-bootstrap": "^10.0.0",
-    "@solana/web3.js": "^1.26.0",
+    "@solana/web3.js": "^1.29.1",
     "@types/crypto-js": "^4.0.2",
     "big-integer": "^1.6.49",
     "bootstrap": "^4.5.0",

@@ -17,9 +17,9 @@
 
         <div class="col m-0 p-0">
             <button class="btn btn-info float-right m-2"
-                (click)="connectToMetaMask()"
-                [disabled]="isConnecting">
-                Connect
+                (click)="connectToProvider()"
+                [disabled]="connectionModel.isDisconnectable()">
+                {{connectionModel.isConnectable() ? 'Connect' : 'Connected' }}
             </button>
         </div>
     </div>

@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { asapScheduler, BehaviorSubject, from, Observable, scheduled } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
@@ -7,11 +8,12 @@ import { WalletProviderInterface } from '../interfaces/wallet-provider.interface
   providedIn: 'root'
 })
 export class WalletService {
+  private window: any
   private address: BehaviorSubject<string|null> = new BehaviorSubject(null)
 
   constructor(
     @Inject('WalletProviderInterface') private walletProvider: WalletProviderInterface
-  ) { }
+  ) {}
 
   public connect(): Observable<string> {
     if (!!this.address.getValue()) {
