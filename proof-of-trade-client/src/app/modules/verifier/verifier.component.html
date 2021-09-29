@@ -1,58 +1,53 @@
-<table class="table table-sm table-bordered m-1 w-100">
-    <thead class="thead-dark">
-        <tr>
-            <th scope="col text-center">Trader №</th>
-            <th scope="col text-center">Email</th>
-            <th scope="col text-center">Address</th>
-            <th scope="col text-center">Profit Verification</th>
-        </tr>
-    </thead>
-    <tbody>
-        <ng-container *ngIf="traders.length > 0; then tradersTmpl; else emptyTradersTmpl"></ng-container>
-    </tbody>
-</table>
+<div class="d-flex flex-column h-100">
+    <div class="row justify-content-center m-0">
+        <ng-container *ngIf="traders === undefined; then loadingTmpl; else loadedTmpl"></ng-container>
+    </div>
+</div>
+
+<ng-template #loadingTmpl>
+    <div class="card-deck justify-content-center m-0">
+        <div class="card text-center bg-light m-3">
+            <div class="card-header bg-dark">
+                <span class="text-light"> Loading... </span>
+            </div>
+            <div class="card-body">
+                <div class="row d-flex justify-content-center">
+                    Please, wait
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #loadedTmpl>
+    <ng-container *ngIf="traders.length > 0; then tradersTmpl; else emptyTradersTmpl"></ng-container>
+</ng-template>
 
 <ng-template #emptyTradersTmpl>
-    <tr>
-        <th class="align-middle text-center" colspan="4">There are no traders yet</th>
-    </tr>
+    <div class="card-deck justify-content-center m-0">
+        <div class="card text-center bg-light m-3">
+            <div class="card-header bg-dark">
+                <span class="text-light"> Ooops! </span>
+            </div>
+            <div class="card-body">
+                <div class="row d-flex justify-content-center">
+                    There are no traders yet
+                </div>
+            </div>
+        </div>
+    </div>
 </ng-template>
 
 <ng-template #tradersTmpl>
-    <tr *ngFor="let trader of traders">
-        <th class="align-middle text-center" scope="row">{{trader.id}}</th>
-        <td class="align-middle text-center">{{trader.email}}</td>
-        <td class="align-middle text-center">{{trader.address}}</td>
-        <td>
-            <table class="table table-sm m-0">
-                <tbody>
-                    <ng-container 
-                        [ngTemplateOutlet]="trader.proof.length > 0 ? proofTmpl : emptyProofTmpl" 
-                        [ngTemplateOutletContext]="{trader: trader}">
-                    </ng-container>
-                </tbody>
-            </table>
-        </td>
-    </tr>
-</ng-template>
+    <div *ngIf="traders" class="card-deck justify-content-center m-0">
+        <ng-container *ngFor="let trader of traders; let i = index">
+            
+            <app-verifier-card [trader]="trader" ></app-verifier-card>
 
-<ng-template #emptyProofTmpl>
-    <tr class="align-middle text-center" colspan="3">
-        No proof periods yet
-    </tr>
-</ng-template>
-
-<ng-template #proofTmpl let-trader="trader">
-    <tr *ngFor="let proof of trader.proof">
-        <td class="align-middle text-center" [ngClass]="{'table-success': proof.percentage > 0, 'table-danger': proof.percentage < 0}">Profit: {{proof.percentage | number : '1.2-2'}}%</td>
-        <td class="align-middle text-center">
-            <ng-container *ngIf="proof.state === 'success'">
-                <span class="btn text-success">{{verificationStatesText[proof.state]}}</span>
-            </ng-container>
-            <ng-container *ngIf="proof.state === 'failed'">
-                <span class="btn text-danger">{{verificationStatesText[proof.state]}}</span>
-            </ng-container>
-            <span *ngIf="proof.state === 'unverified'" class="btn btn-link" (click)="verifyProof(trader.id, proof.id)">Verify</span>
-        </td>
-    </tr>
+            <!-- Multiple rows chunked -->
+            <div *ngIf="(i + 1) % 2 === 0" class="w-100 d-none d-sm-block d-md-block d-lg-none"></div>
+            <div *ngIf="(i + 1) % 3 === 0" class="w-100 d-none d-lg-block d-xl-none"></div>
+            <div *ngIf="(i + 1) % 4 === 0" class="w-100 d-none d-xl-block"></div>
+        </ng-container>
+    </div>
 </ng-template>

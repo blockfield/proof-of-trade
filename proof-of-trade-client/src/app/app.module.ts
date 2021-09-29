@@ -6,8 +6,8 @@ import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MenuComponent } from './core/components/menu/menu.component';
 import { SharedModule } from './modules/shared/shared.module';
-import { PhantomProvider } from './core/wallet-providers/phantom.provider';
 import { Contract } from './api/solana/contract';
+import { PhantomProvider } from './core/wallet-providers/phantom.provider';
 
 @NgModule({
   declarations: [
