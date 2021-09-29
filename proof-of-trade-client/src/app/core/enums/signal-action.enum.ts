@@ -4,8 +4,8 @@ export enum SignalActionEnum {
 }
 
 export let actions: SignalActionEnum[] = [
-    SignalActionEnum.Sell,
     SignalActionEnum.Buy,
+    SignalActionEnum.Sell,
 ]
 
 export let actionsText = {
