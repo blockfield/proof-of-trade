@@ -20,7 +20,7 @@ export class AddAccountComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public sendEmail(): void {
+  public addEmail(): void {
     if (!this.account.email) {
       console.log('empty signal data')
       return

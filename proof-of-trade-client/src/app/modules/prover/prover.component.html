@@ -1,4 +1,4 @@
-<div class="row w-100 m-0">
+<div class="row align-items-center h-100 w-100 m-0">
     <ng-container *ngIf="email === undefined; then loadingTmpl; else loadedTmpl"></ng-container>
 </div>
 
@@ -10,10 +10,12 @@
 </ng-template>
 
 <ng-template #newAccountTmpl>
-    <div class="col border text-center">
-        <h3 class="m-4">Add Account Data</h3>
+    <div class="col">
         <app-add-account (traderAdded)="onTraderAdded($event)"></app-add-account>
     </div>
+    <!-- <div class="col border text-center">
+        
+    </div> -->
 </ng-template>
 
 <ng-template #accountTmpl>
