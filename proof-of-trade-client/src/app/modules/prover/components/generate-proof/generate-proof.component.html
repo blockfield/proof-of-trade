@@ -22,11 +22,11 @@
     </div>
     <div class="row">
         <div class="col-md">
-            <div class="row">
+            <div class="row my-3">
                 <h4 class="m-auto">Private trades data:</h4>
             </div>
-            <div *ngFor="let data of model.proofs" class="form-group row my-3">
-                <div class="col-md-4">
+            <div *ngFor="let data of model.proofs" class="form-group row align-items-center my-3">
+                <div class="col-md-3">
                     <div class="btn-group" role="group">
                         <button *ngFor="let currency of currencies"
                                 type="button"
@@ -38,19 +38,21 @@
                         </button>
                     </div>
                 </div>
-                <div class="col-md-3 input-group">
-                    <div class="input-group-prepend">
-                        <label class="input-group-text col-form-label" for="sum">Sum</label>
+                <div class="col-md-6">
+                    <div class="row input-group m-0">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text col-form-label input-fieldjustify-content-center " for="sum">Amount</label>
+                        </div>
+                        <input required type="number" class="form-control" id="sum" name="sum" min="0" [(ngModel)]="data.amount">
                     </div>
-                    <input required type="number" class="form-control" id="sum" name="sum" min="0" [(ngModel)]="data.amount">
-                </div>
-                <div class="col-md-3 input-group">
-                    <div class="input-group-prepend">
-                        <label class="input-group-text col-form-label" for="nonce">Nonce</label>
+                    <div class="row input-group m-0">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text col-form-label input-field justify-content-center" for="nonce">Nonce</label>
+                        </div>
+                        <input required type="number" class="form-control" id="nonce" name="nonce" [(ngModel)]="data.nonce">
                     </div>
-                    <input required type="number" class="form-control" id="nonce" name="nonce" [(ngModel)]="data.nonce">
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <div class="btn-group" role="group">
                         <button *ngFor="let action of actions" type="button" class="btn btn-info" (click)="selectAction(data.id, action)" [class.active]="data.action === action">
                             {{actionsText[action]}}
@@ -62,7 +64,7 @@
     </div>
     <div class="form-group row">
         <div class="col">
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-success">
                 <span class="p-3">Generate Proof</span>
             </button>
         </div>

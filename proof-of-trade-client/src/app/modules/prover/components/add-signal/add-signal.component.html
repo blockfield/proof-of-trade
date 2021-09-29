@@ -1,6 +1,6 @@
 <form (ngSubmit)="sendSignal()">
-    <div class="form-group row">
-        <div class="col-md-4">
+    <div class="row form-group align-items-center">
+        <div class="col-md-3">
             <div class="btn-group" role="group">
                 <button *ngFor="let currency of currencies"
                         type="button"
@@ -12,24 +12,28 @@
                 </button>
             </div>
         </div>
-        <div class="col-md-4 input-group">
-            <div class="input-group-prepend">
-                <label class="input-group-text col-form-label" for="sum">Sum</label>
+        <div class="col-md-5">
+            <div class="row input-group m-0">
+                <div class="input-group-prepend">
+                    <label class="input-group-text col-form-label input-field justify-content-center" for="sum">Sum</label>
+                </div>
+                <input required type="number" class="form-control" id="sum" name="sum" min="0" [(ngModel)]="signal.amount">
             </div>
-            <input required type="number" class="form-control" id="sum" name="sum" min="0" [(ngModel)]="signal.amount">
-        </div>
-        <div class="col-md-4 input-group">
-            <div class="input-group-prepend">
-                <label class="input-group-text col-form-label" for="nonce">Nonce</label>
+            <div class="row input-group m-0">
+                <div class="input-group-prepend">
+                    <label class="input-group-text col-form-label input-field justify-content-center" for="nonce">Nonce</label>
+                </div>
+                <input required type="number" class="form-control" id="nonce" name="nonce" [(ngModel)]="signal.nonce">
             </div>
-            <input required type="number" class="form-control" id="nonce" name="nonce" [(ngModel)]="signal.nonce">
         </div>
-    </div>
-    <div class="form-group row">
-        <div *ngFor="let action of actions" class="col">
-            <button type="submit" class="btn" [ngClass]="{'btn-danger': action === 0, 'btn-success': action === 1}" (click)="setAction(action)">
-                <span class="p-3">{{actionsText[action]}}</span>
-            </button>
+        <div class="col-md-4">
+            <div class="row">
+                <div *ngFor="let action of actions" class="col">
+                    <button type="submit" class="btn" [ngClass]="{'btn-danger': action === 0, 'btn-success': action === 1}" (click)="setAction(action)">
+                        <span class="p-3">{{actionsText[action]}}</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </form>
