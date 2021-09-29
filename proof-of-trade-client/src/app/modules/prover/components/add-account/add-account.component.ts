@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { AccountModel } from '../../models/account.model';
 import { TraderService } from '../../services/trader.service';
 
@@ -8,8 +8,10 @@ import { TraderService } from '../../services/trader.service';
   styleUrls: ['./add-account.component.less']
 })
 export class AddAccountComponent implements OnInit {
+  @Output() traderAdded: EventEmitter<string> = new EventEmitter<string>();
 
   public account: AccountModel = new AccountModel()
+  public isAdding = false
 
   constructor(
     private traderService: TraderService,
@@ -24,12 +26,16 @@ export class AddAccountComponent implements OnInit {
       return
     }
 
+    this.isAdding = true
+
     this.traderService.addTrader(this.account.email).subscribe(
       () => {
-        console.log('trader is added')
+        this.traderAdded.emit(this.account.email)
+        this.isAdding = false
       },
       (error: any) => {
         console.log('error on addTrader: ', error)
+        this.isAdding = false
       }
     )
   }

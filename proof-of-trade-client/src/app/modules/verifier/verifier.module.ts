@@ -5,8 +5,8 @@ import { VerifierRoutingModule } from './verifier-routing.module';
 import { VerifierComponent } from './verifier.component';
 import { SharedModule } from '../shared/shared.module';
 import { VerifierCardComponent } from './components/verifier-card/verifier-card.component';
-import { Contract } from 'src/app/api/solana/contract';
-import { PhantomProvider } from 'src/app/core/wallet-providers/phantom.provider';
+import { Contract } from 'src/app/api/ethereum/contract';
+import { MetaMaskProvider } from 'src/app/core/wallet-providers/meta-mask.provider';
 
 
 @NgModule({
@@ -17,7 +17,7 @@ import { PhantomProvider } from 'src/app/core/wallet-providers/phantom.provider'
   imports: [
     CommonModule,
     VerifierRoutingModule,
-    SharedModule.withProviders(Contract, PhantomProvider),
+    SharedModule.withProviders(Contract, MetaMaskProvider),
   ]
 })
 export class VerifierModule { }

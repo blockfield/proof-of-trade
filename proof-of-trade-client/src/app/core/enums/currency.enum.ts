@@ -7,7 +7,7 @@ export enum CurrencyEnum {
 export let currencies: CurrencyEnum[] = [
     CurrencyEnum.ETH,
     CurrencyEnum.BTC,
-    CurrencyEnum.DGTX
+    // CurrencyEnum.DGTX
 ]
 
 export let currenciesText = {

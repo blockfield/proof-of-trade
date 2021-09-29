@@ -1,16 +1,28 @@
 <div class="row w-100 m-0">
+    <ng-container *ngIf="email === undefined; then loadingTmpl; else loadedTmpl"></ng-container>
+</div>
+
+<ng-template #loadingTmpl>
+</ng-template>
+
+<ng-template #loadedTmpl>
+    <ng-container *ngIf="email; then accountTmpl; else newAccountTmpl"></ng-container>
+</ng-template>
+
+<ng-template #newAccountTmpl>
     <div class="col border text-center">
-        <h3 class="m-4">Step 0. Add Account Data</h3>
-        <app-add-account></app-add-account>
+        <h3 class="m-4">Add Account Data</h3>
+        <app-add-account (traderAdded)="onTraderAdded($event)"></app-add-account>
     </div>
+</ng-template>
+
+<ng-template #accountTmpl>
     <div class="col border text-center">
-        <h3 class="m-4">Step 1. Add Signal</h3>
+        <h3 class="m-4">Add Signal</h3>
         <app-add-signal></app-add-signal>
     </div>
-</div>
-<div class="row w-100 m-0">
     <div class="col border text-center">
-        <h3 class="m-4">Step 2. Create Period Profit Proof</h3>
+        <h3 class="m-4">Create Period Profit Proof</h3>
         <app-generate-proof></app-generate-proof>
     </div>
-</div>
+</ng-template>
