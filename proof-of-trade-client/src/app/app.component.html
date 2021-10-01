@@ -1,4 +1,4 @@
-<div class="d-flex flex-column w-100 h-100">
+<div class="d-flex flex-column w-100 h-100 bg-light">
   <div>
       <app-menu (connectedEvent)="onConnected($event)"></app-menu>
   </div>
@@ -26,7 +26,7 @@
 <ng-template #notConnectedTmpl>
   <div class="row m-3 p-3">
     <div class="col">
-      <h2 class="text-center">Need to connect to the Phantom extension via "Connect" button</h2>
+      <app-connection></app-connection>
     </div>
   </div>
 </ng-template>

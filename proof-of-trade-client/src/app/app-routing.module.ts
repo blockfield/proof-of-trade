@@ -1,7 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { HomeComponent } from './core/components/home/home.component';
 
 const routes: Routes = [
+  {
+    path: '',
+    pathMatch: 'full',
+    component: HomeComponent,
+  },
   {
     path: 'user',
     loadChildren: () => import('./modules/verifier/verifier.module').then(m => m.VerifierModule)
@@ -12,7 +18,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'user',
+    redirectTo: '',
   },
 ];
 
