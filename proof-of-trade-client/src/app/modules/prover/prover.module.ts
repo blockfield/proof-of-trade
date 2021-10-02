@@ -10,6 +10,9 @@ import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
 import { Contract } from 'src/app/api/ethereum/contract';
 import { MetaMaskProvider } from 'src/app/core/wallet-providers/meta-mask.provider';
+import { SignalsComponent } from './components/signals/signals.component';
+import { ProofComponent } from './components/proof/proof.component';
+import { FollowersComponent } from './components/followers/followers.component';
 
 
 @NgModule({
@@ -18,6 +21,9 @@ import { MetaMaskProvider } from 'src/app/core/wallet-providers/meta-mask.provid
     AddSignalComponent,
     GenerateProofComponent,
     ProverComponent,
+    SignalsComponent,
+    ProofComponent,
+    FollowersComponent,
   ],
   imports: [
     CommonModule,

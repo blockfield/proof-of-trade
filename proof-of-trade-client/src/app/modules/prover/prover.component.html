@@ -16,12 +16,7 @@
 </ng-template>
 
 <ng-template #accountTmpl>
-    <div class="col-xl border text-center">
-        <h3 class="m-4">Add Signal</h3>
-        <app-add-signal></app-add-signal>
-    </div>
-    <div class="col-xl border text-center">
-        <h3 class="m-4">Create Proof</h3>
-        <app-generate-proof></app-generate-proof>
+    <div class="col">
+        <router-outlet></router-outlet>
     </div>
 </ng-template>

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { faChalkboardTeacher, faUser } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -10,8 +11,14 @@ export class HomeComponent implements OnInit {
   public faUser = faUser
   public faChalkboardTeacher = faChalkboardTeacher
 
-  constructor() { }
+  constructor(
+    private router: Router,
+  ) { }
 
   ngOnInit(): void {}
+
+  public goTo(state: string): void {
+    this.router.navigate(['/', state])
+  }
 
 }

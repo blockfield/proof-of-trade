@@ -1,4 +1,6 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { MenuService } from 'src/app/core/services/menu.service';
 import { TraderModel } from './models/trader.model';
 import { TradersService } from './services/traders.service';
 
@@ -8,26 +10,20 @@ import { TradersService } from './services/traders.service';
   styleUrls: ['./verifier.component.less']
 })
 export class VerifierComponent implements OnInit {
-  traders: TraderModel[]
 
   constructor(
-    private tradersService: TradersService,
+    private location: Location,
+    private menuService: MenuService,
   ) { }
 
   ngOnInit(): void {
-    this.initTraders()
+    this.initMenu()
   }
 
-  private initTraders(): void {
-    this.tradersService.getTraders().subscribe(
-      (traders: TraderModel) => {
-        if (this.traders === undefined) {
-          this.traders = []
-        }
-        
-        this.traders.push(traders)
-      }
-    )
+  private initMenu(): void {
+    let states = this.location.normalize(this.location.path()).split('/')
+    
+    this.menuService.changeState(states[1], states[2])
   }
 
 }

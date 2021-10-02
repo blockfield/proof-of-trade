@@ -1,53 +1,5 @@
 <div class="d-flex flex-column h-100">
     <div class="row justify-content-center m-0">
-        <ng-container *ngIf="traders === undefined; then loadingTmpl; else loadedTmpl"></ng-container>
+        <router-outlet></router-outlet>
     </div>
 </div>
-
-<ng-template #loadingTmpl>
-    <div class="card-deck justify-content-center m-0">
-        <div class="card text-center bg-light m-3">
-            <div class="card-header bg-dark">
-                <span class="text-light"> Loading... </span>
-            </div>
-            <div class="card-body">
-                <div class="row d-flex justify-content-center">
-                    Please, wait
-                </div>
-            </div>
-        </div>
-    </div>
-</ng-template>
-
-<ng-template #loadedTmpl>
-    <ng-container *ngIf="traders.length > 0; then tradersTmpl; else emptyTradersTmpl"></ng-container>
-</ng-template>
-
-<ng-template #emptyTradersTmpl>
-    <div class="card-deck justify-content-center m-0">
-        <div class="card text-center bg-light m-3">
-            <div class="card-header bg-dark">
-                <span class="text-light"> Ooops! </span>
-            </div>
-            <div class="card-body">
-                <div class="row d-flex justify-content-center">
-                    There are no traders yet
-                </div>
-            </div>
-        </div>
-    </div>
-</ng-template>
-
-<ng-template #tradersTmpl>
-    <div *ngIf="traders" class="card-deck justify-content-center m-0">
-        <ng-container *ngFor="let trader of traders; let i = index">
-            
-            <app-verifier-card [trader]="trader" ></app-verifier-card>
-
-            <!-- Multiple rows chunked -->
-            <div *ngIf="(i + 1) % 2 === 0" class="w-100 d-none d-sm-block d-md-block d-lg-none"></div>
-            <div *ngIf="(i + 1) % 3 === 0" class="w-100 d-none d-lg-block d-xl-none"></div>
-            <div *ngIf="(i + 1) % 4 === 0" class="w-100 d-none d-xl-block"></div>
-        </ng-container>
-    </div>
-</ng-template>
