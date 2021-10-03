@@ -6,7 +6,7 @@
         <ng-container *ngIf="trader.proof.length > 0; then proofTmpl; else emptyProofTmpl"></ng-container>
     </div>
     <div class="card-footer text-muted">
-        Proof's count: {{trader.proof.length}}
+        {{trader.date | date:'d MMMM y'}}
     </div>
 </div>
 
@@ -19,25 +19,27 @@
 </ng-template>
 
 <ng-template #proofTmpl>
-    <ng-container *ngFor="let proof of trader.proof">
-        <div class="row">
-            <div class="col-2 my-auto">
-                {{proof.id}}
-            </div>
-            <div class="col-5 my-auto">
-                <span [ngClass]="{'text-success': proof.percentage > 0, 'text-danger': proof.percentage < 0}">
-                    {{proof.percentage | number : '1.2-2'}}%
-                </span>
-            </div>
-            <div class="col-5 my-auto">
-                <ng-container *ngIf="proof.state === 'success'">
-                    <span class="btn text-success">{{verificationStatesText[proof.state]}}</span>
-                </ng-container>
-                <ng-container *ngIf="proof.state === 'failed'">
-                    <span class="btn text-danger">{{verificationStatesText[proof.state]}}</span>
-                </ng-container>
-                <span *ngIf="proof.state === 'unverified'" class="btn btn-link" (click)="verifyProof(proof.id)">Verify</span>
-            </div>
+    <div class="row">
+        <div class="col-4 my-auto">
+            <span [ngClass]="{'text-success': trader.avgProfitPerMonth > 0, 'text-danger': trader.avgProfitPerMonth < 0}">
+                {{trader.avgProfitPerMonth | number : '1.2-2'}}%
+            </span>
         </div>
-    </ng-container>
+        <div class="col-4 my-auto">
+            {{trader.avgProofCountPerMonth}}
+        </div>
+
+        <div class="col-4 p-0 my-auto">
+            <ng-container *ngIf="trader.state === 'success'">
+                <span class="text-success state">{{verificationStatesText[trader.state]}}</span>
+            </ng-container>
+            <ng-container *ngIf="trader.state === 'failed'">
+                <span class="text-danger state">{{verificationStatesText[trader.state]}}</span>
+            </ng-container>
+            <ng-container *ngIf="trader.state === 'processing'">
+                <span class="text-info state">{{verificationStatesText[trader.state]}}</span>
+            </ng-container>
+            <span *ngIf="trader.state === 'unverified'" class="btn-link verify" (click)="verifyTrader()">Verify</span>
+        </div>
+    </div>
 </ng-template>

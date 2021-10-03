@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { verificationText } from 'src/app/core/enums/verification.enum';
+import { verificationProofText } from 'src/app/core/enums/verification-proof.enum';
+import { VerificationTraderEnum, verificationTraderText } from 'src/app/core/enums/verification-trader.enum';
 import { ZkService } from 'src/app/modules/shared/services/zk.service';
 import { TraderModel } from '../../models/trader.model';
 
@@ -11,7 +12,7 @@ import { TraderModel } from '../../models/trader.model';
 export class VerifierCardComponent implements OnInit {
   @Input('trader') trader: TraderModel
 
-  public verificationStatesText = verificationText
+  public verificationStatesText = verificationTraderText
 
   constructor(
     private zkService: ZkService
@@ -20,18 +21,17 @@ export class VerifierCardComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public verifyProof(proofId: number): void {
-    let proof = this.trader.proof[proofId]
-    if (!proof) {
-      return;
-    }
+  public verifyTrader(): void {
+    let proofIds = this.trader.proof.map(x => x.id)
 
-    this.zkService.verify(this.trader.address, proof.id).subscribe(
+    this.trader.setState(VerificationTraderEnum.Processing)
+
+    this.zkService.verifyAll(this.trader.address, proofIds).subscribe(
       (isSuccess: boolean) => {
-        proof.setState(isSuccess)
+        this.trader.setState(isSuccess ? VerificationTraderEnum.Success : VerificationTraderEnum.Failed)
       },
       (error: any) => {
-        proof.setState(false)
+        this.trader.setState(VerificationTraderEnum.Failed)
         console.log('verify period error: ', error)
       }
     )

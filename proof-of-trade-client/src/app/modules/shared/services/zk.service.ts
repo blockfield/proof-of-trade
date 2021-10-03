@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { from, Observable } from 'rxjs';
+import { asapScheduler, from, Observable, scheduled } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SmartContractInterface } from '../interfaces/smart-contract.interface';
 import { ProofModel } from '../models/proof.model';
@@ -63,6 +63,24 @@ export class ZkService {
 
   public verify(address: string, proofId: number): Observable<boolean> {
       return from(this.internalVerify(address, proofId))
+  }
+
+  public verifyAll(address: string, proofIds: number[]): Observable<boolean> {
+    return from(this.internalVerifyAll(address, proofIds))
+  }
+
+  private async internalVerifyAll(address: string, proofIds: number[]): Promise<boolean> {
+    let isTraderSuccess: boolean = true
+
+    for (const proofId of proofIds) {
+      let isProofSuccess = await this.internalVerify(address, proofId)
+
+      isTraderSuccess = isTraderSuccess && isProofSuccess
+    }
+
+    return new Promise((resolve) => {
+      resolve(isTraderSuccess)
+    })
   }
 
   private async internalVerify(address: string, proofId: number): Promise<boolean> {

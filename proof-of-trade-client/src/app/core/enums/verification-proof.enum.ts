@@ -1,10 +1,10 @@
-export enum VerificationEnum {
+export enum VerificationProofEnum {
     Unverified = "unverified",
     Success = "success",
     Failed = "failed"
 }
 
-export let verificationText = {
+export let verificationProofText = {
     unverified: "Unverified",
     success: "Success",
     failed: "Failed",

@@ -1,7 +1,7 @@
-import { VerificationEnum } from "src/app/core/enums/verification.enum";
+import { VerificationProofEnum } from "src/app/core/enums/verification-proof.enum";
 
 export class ProofItem {
-    public state: VerificationEnum
+    public state: VerificationProofEnum
     public percentage: number
 
     constructor(
@@ -9,7 +9,7 @@ export class ProofItem {
         balance: number,
         prevBalance: number,
     ) {
-        this.state = VerificationEnum.Unverified
+        this.state = VerificationProofEnum.Unverified
 
         if (prevBalance === 0) {
             prevBalance = balance
@@ -20,10 +20,10 @@ export class ProofItem {
 
     public setState(isSucces: boolean): void {
         if (isSucces) {
-            this.state = VerificationEnum.Success
+            this.state = VerificationProofEnum.Success
             return
         }
 
-        this.state = VerificationEnum.Failed
+        this.state = VerificationProofEnum.Failed
     }
 }
