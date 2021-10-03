@@ -11,25 +11,52 @@
 </div>
 
 <ng-template #emptyProofTmpl>
-    <div class="row justify-content-center">
-        <div class="col btn" style="cursor: unset">
-            No proof periods yet
+    <div class="row my-3">
+        <div class="col my-auto">
+            <span class="state">
+                There are no
+            </span>
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col my-auto">
+            <span class="state">
+                proof periods
+            </span>
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col my-auto">
+            <span class="state">
+                yet
+            </span>
         </div>
     </div>
 </ng-template>
 
 <ng-template #proofTmpl>
-    <div class="row">
+    <div class="row my-3">
+        <div class="col-8 my-auto">
+            <span>
+                Profit per month:
+            </span>
+        </div>
         <div class="col-4 my-auto">
             <span [ngClass]="{'text-success': trader.avgProfitPerMonth > 0, 'text-danger': trader.avgProfitPerMonth < 0}">
                 {{trader.avgProfitPerMonth | number : '1.2-2'}}%
             </span>
         </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-8 my-auto">
+            Proof per month:
+        </div>
         <div class="col-4 my-auto">
             {{trader.avgProofCountPerMonth}}
         </div>
-
-        <div class="col-4 p-0 my-auto">
+    </div>
+    <div class="row my-3">
+        <div class="col my-auto">
             <ng-container *ngIf="trader.state === 'success'">
                 <span class="text-success state">{{verificationStatesText[trader.state]}}</span>
             </ng-container>
@@ -39,7 +66,7 @@
             <ng-container *ngIf="trader.state === 'processing'">
                 <span class="text-info state">{{verificationStatesText[trader.state]}}</span>
             </ng-container>
-            <span *ngIf="trader.state === 'unverified'" class="btn-link verify" (click)="verifyTrader()">Verify</span>
+            <span *ngIf="trader.state === 'unverified'" class="btn-link verify" (click)="verifyTrader()">Verify Trader</span>
         </div>
     </div>
 </ng-template>

@@ -45,6 +45,10 @@ export class TradersService {
           prevProofBalance = (await this.contract.getPeriodProofs(address, j-1)).y
         }
 
+        if (i === 1) {
+          console.log('balance, prevBalance', balance, prevProofBalance)
+        }
+
         proof.push(new ProofItem(j, balance, prevProofBalance))
 
         profitSum += (balance - prevProofBalance)

@@ -7,7 +7,7 @@ export enum VerificationTraderEnum {
 
 export let verificationTraderText = {
     unverified: "Unverified",
-    processing: "Processing",
+    processing: "Processing...",
     success: "Success",
     failed: "Failed",
 }
