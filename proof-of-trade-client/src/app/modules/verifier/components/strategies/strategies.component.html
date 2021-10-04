@@ -1,8 +1,8 @@
-<ng-container *ngIf="traders === undefined; then loadingTmpl; else loadedTmpl"></ng-container>
+<ng-container *ngIf="strategies === undefined; then loadingTmpl; else loadedTmpl"></ng-container>
 
 <ng-template #loadingTmpl>
     <div class="card-deck justify-content-center m-0">
-        <div class="card text-center bg-light m-3">
+        <div class="card text-center bg-light m-3 loading">
             <div class="card-header bg-dark">
                 <span class="text-light"> Loading... </span>
             </div>
@@ -16,10 +16,10 @@
 </ng-template>
 
 <ng-template #loadedTmpl>
-    <ng-container *ngIf="traders.length > 0; then tradersTmpl; else emptyTradersTmpl"></ng-container>
+    <ng-container *ngIf="strategies.length > 0; then strategiesTmpl; else emptyStrategiesTmpl"></ng-container>
 </ng-template>
 
-<ng-template #emptyTradersTmpl>
+<ng-template #emptyStrategiesTmpl>
     <div class="card-deck justify-content-center m-0">
         <div class="card text-center bg-light m-3">
             <div class="card-header bg-dark">
@@ -34,11 +34,11 @@
     </div>
 </ng-template>
 
-<ng-template #tradersTmpl>
-    <div *ngIf="traders" class="card-deck justify-content-center m-0">
-        <ng-container *ngFor="let trader of traders; let i = index">
+<ng-template #strategiesTmpl>
+    <div *ngIf="strategies" class="card-deck justify-content-center m-0">
+        <ng-container *ngFor="let strategy of strategies; let i = index">
             
-            <app-verifier-card [trader]="trader" ></app-verifier-card>
+            <app-strategy-card [strategy]="strategy"></app-strategy-card>
 
             <!-- Multiple rows chunked -->
             <div *ngIf="(i + 1) % 2 === 0" class="w-100 d-none d-sm-block d-md-block d-lg-none"></div>

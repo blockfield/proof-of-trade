@@ -6,8 +6,8 @@ export class ProofItem {
 
     constructor(
         public id: number,
-        balance: number,
-        prevBalance: number,
+        public balance: number,
+        public prevBalance: number,
     ) {
         this.state = VerificationProofEnum.Unverified
 

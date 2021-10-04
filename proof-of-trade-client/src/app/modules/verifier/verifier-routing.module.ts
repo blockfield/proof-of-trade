@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { SignalsComponent } from './components/signals/signals.component';
 import { SubscriptionsComponent } from './components/subscriptions/subscriptions.component';
-import { TradersComponent } from './components/traders/traders.component';
+import { TraderComponent } from './components/trader/trader.component';
+import { StrategiesComponent } from './components/strategies/strategies.component';
 import { VerifierComponent } from './verifier.component';
 
 const routes: Routes = [
@@ -12,7 +13,11 @@ const routes: Routes = [
     children: [
       {
         path: 'traders',
-        component: TradersComponent
+        component: StrategiesComponent
+      },
+      {
+        path: 'trader/:id',
+        component: TraderComponent
       },
       {
         path: 'subscriptions',

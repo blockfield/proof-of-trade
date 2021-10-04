@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MenuService } from 'src/app/core/services/menu.service';
-import { TraderModel } from './models/trader.model';
+import { StrategyModel } from './models/strategy.model';
 import { TradersService } from './services/traders.service';
 
 @Component({

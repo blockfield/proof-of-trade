@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { from, Observable, Subject } from 'rxjs';
 import { VerificationTraderEnum } from 'src/app/core/enums/verification-trader.enum';
 import { SmartContractInterface } from '../../shared/interfaces/smart-contract.interface';
 import { ProofItem } from '../models/proof-item';
+import { StrategyModel } from '../models/strategy.model';
 import { TraderModel } from '../models/trader.model';
 
 @Injectable({
@@ -14,53 +15,66 @@ export class TradersService {
     @Inject('SmartContractInterface') private contract: SmartContractInterface
   ) {}
 
-  public getTraders(): Observable<TraderModel> {
-    let tradersSubject = new Subject<TraderModel>();
+  public getTrader(index: number): Observable<TraderModel> {
+    return from(this.getTraderModel(index))
+  }
+
+  public getTraders(): Observable<StrategyModel> {
+    let tradersSubject = new Subject<StrategyModel>();
 
     (async () => await this.nextTrader(tradersSubject))()
 
     return tradersSubject
   }
 
-  private async nextTrader(tradersSubject: Subject<TraderModel>): Promise<void> {
+  private async getTraderModel(index: number): Promise<TraderModel> {
+    const address = await this.contract.getTrader(index)
+    const email = await this.contract.getEmail(address)
+    const proofLen = await this.contract.getProofLen(address)
+
+    const createdDate = new Date(2021, 7, 1, 15, 0, 0)
+    const initBalance = 1000
+
+    let proof: ProofItem[] = []
+    for (let j = 0; j < proofLen; j++) {
+      let balance = (await this.contract.getPeriodProofs(address, j)).y
+
+      let prevProofBalance = initBalance
+      if (j !== 0) {
+        prevProofBalance = (await this.contract.getPeriodProofs(address, j-1)).y
+      }
+
+      proof.push(new ProofItem(j, balance, prevProofBalance))
+    }
+
+    return new TraderModel(index, email, address, proof, createdDate)
+  }
+
+  private async nextTrader(tradersSubject: Subject<StrategyModel>): Promise<void> {
     const now = new Date()
     const tradersCount = await this.contract.getTradersCount()
 
     for (let i = 0; i < tradersCount; i++) {
-      const address = await this.contract.getTrader(i)
-      const email = await this.contract.getEmail(address)
-      const proofLen = await this.contract.getProofLen(address)
+      const traderModel = await this.getTraderModel(i)
 
       const createdDate = new Date(2021, 7, 1, 15, 0, 0)
       const initBalance = 1000
 
-      let proof: ProofItem[] = []
       let profitSum = 0
       let proofCount = 0
-      for (let j = 0; j < proofLen; j++) {
-        let balance = (await this.contract.getPeriodProofs(address, j)).y
-
-        let prevProofBalance = initBalance
-        if (j !== 0) {
-          prevProofBalance = (await this.contract.getPeriodProofs(address, j-1)).y
-        }
-
-        if (i === 1) {
-          console.log('balance, prevBalance', balance, prevProofBalance)
-        }
-
-        proof.push(new ProofItem(j, balance, prevProofBalance))
-
-        profitSum += (balance - prevProofBalance)
+      let proofIds = []
+      for (let j = 0; j < traderModel.proof.length; j++) {
+        profitSum += (traderModel.proof[j].balance - traderModel.proof[j].prevBalance)
         proofCount++
+        proofIds.push(j)
       }
 
       const monthDiffForAvg = this.monthDiff(createdDate, now) ?? 1
       const avgProfitPerMonth = 100 * (profitSum / initBalance) / monthDiffForAvg
       const avgProofCountPerMonth = proofCount / monthDiffForAvg
 
-      tradersSubject.next(new TraderModel(
-          i, email, address, proof,
+      tradersSubject.next(new StrategyModel(
+          i, traderModel.email, traderModel.address, proofIds,
           avgProfitPerMonth, avgProofCountPerMonth,
           VerificationTraderEnum.Unverified, createdDate
         )
