@@ -68,10 +68,10 @@
             <ng-container *ngIf="strategy.state === 'processing'">
                 <span class="float-left text-info state">{{verificationStatesText[strategy.state]}}</span>
             </ng-container>
-            <span *ngIf="strategy.state === 'unverified'" class="btn-link float-left verify" (click)="verifyTrader()">Verify Trader</span>
+            <span *ngIf="strategy.state === 'unverified'" class="btn-link float-left pointer-cursor" (click)="verifyTrader()">Verify Trader</span>
         </div>
         <div class="col-5 my-auto">
-            <btn class="btn btn-link" [routerLink]="['/user/trader', strategy.id]">Details...</btn>
+            <btn class="btn-link pointer-cursor" [routerLink]="['/user/trader', strategy.id]">Details...</btn>
         </div>
     </div>
 </ng-template>
