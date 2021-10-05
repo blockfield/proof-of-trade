@@ -42,7 +42,7 @@ export class AddSignalComponent implements OnInit {
 
     const hash = this.signalService.hash(this.signal)
 
-    this.traderService.addSignal(hash).subscribe(
+    this.traderService.addSignal(this.signal, hash).subscribe(
       () => {
         console.log('signal is added')
       },
