@@ -22,7 +22,6 @@ export class ProverComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.initMenu()
     this.initEmail()
   }
 
@@ -36,12 +35,17 @@ export class ProverComponent implements OnInit {
     from(this.contract.getEmail(this.walletService.getAddress())).subscribe(
       (email: string) => {
         this.email = email
+
+        if (email) {
+          this.initMenu()
+        }
       }
     )
   }
 
   public onTraderAdded(email: string): void {
     this.email = email
+    this.initMenu()
   }
 
 }
