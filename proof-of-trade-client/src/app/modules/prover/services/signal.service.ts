@@ -11,7 +11,7 @@ export class SignalService {
 
   public hash(signal: SignalModel): string {
     return (window as any).signalHash(
-      signal.getAction().valueOf(),
+      signal.action.valueOf(),
       signal.amount,
       signal.nonce
     )

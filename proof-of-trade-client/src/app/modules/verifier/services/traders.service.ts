@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { from, Observable, Subject } from 'rxjs';
-import { VerificationTraderEnum } from 'src/app/core/enums/verification-trader.enum';
+import { VerificationProverEnum } from 'src/app/core/enums/verification-trader.enum';
 import { SmartContractInterface } from '../../shared/interfaces/smart-contract.interface';
 import { ProofItem } from '../models/proof-item';
 import { StrategyModel } from '../models/strategy.model';
@@ -76,7 +76,7 @@ export class TradersService {
       tradersSubject.next(new StrategyModel(
           i, traderModel.email, traderModel.address, proofIds,
           avgProfitPerMonth, avgProofCountPerMonth,
-          VerificationTraderEnum.Unverified, createdDate
+          VerificationProverEnum.Unverified, createdDate
         )
       )
     }

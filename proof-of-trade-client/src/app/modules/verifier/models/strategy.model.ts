@@ -1,4 +1,4 @@
-import { VerificationTraderEnum } from "src/app/core/enums/verification-trader.enum";
+import { VerificationProverEnum } from "src/app/core/enums/verification-trader.enum";
 
 export class StrategyModel {
     constructor(
@@ -8,11 +8,11 @@ export class StrategyModel {
         public proofIds: number[],
         public avgProfitPerMonth: number,
         public avgProofCountPerMonth: number,
-        public state: VerificationTraderEnum,
+        public state: VerificationProverEnum,
         public date: Date
     ) {}
 
-    public setState(state: VerificationTraderEnum): void {
+    public setState(state: VerificationProverEnum): void {
         this.state = state
     }
 }

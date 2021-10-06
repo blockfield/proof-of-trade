@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { from, Observable } from 'rxjs';
+import { asapScheduler, from, Observable, scheduled } from 'rxjs';
 import { flatMap, mergeMap, tap } from 'rxjs/operators';
 import { StorageService } from 'src/app/core/services/storage.service';
 import { SmartContractInterface } from '../../shared/interfaces/smart-contract.interface';
@@ -25,7 +25,7 @@ export class TraderService {
   public addSignal(signal: SignalModel, hash: string): Observable<void> {
     return from(this.contract.addSignal(hash))
       .pipe(
-        // mergeMap(() => this.storageService.set('signal', signal))
+        mergeMap(() => this.storageService.set('signal', signal))
       )
   }
 

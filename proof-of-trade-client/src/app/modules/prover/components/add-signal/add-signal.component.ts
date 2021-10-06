@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { currencies, currenciesText, CurrencyEnum } from 'src/app/core/enums/currency.enum';
 import { actions, actionsText, SignalActionEnum } from 'src/app/core/enums/signal-action.enum';
+import { SignalStateEnum } from 'src/app/core/enums/signal-state.enum';
 import { SignalModel } from '../../models/signal.model';
 import { SignalService } from '../../services/signal.service';
 import { TraderService } from '../../services/trader.service';
@@ -11,12 +12,14 @@ import { TraderService } from '../../services/trader.service';
   styleUrls: ['./add-signal.component.less']
 })
 export class AddSignalComponent implements OnInit {
-  public currencies: CurrencyEnum[] = currencies
-  public currenciesText = currenciesText
-  public actions: SignalActionEnum[] = actions
-  public actionsText = actionsText
+  private stepCount = 5
 
-  public signal: SignalModel = new SignalModel(this.currencies[0])
+  public actionsText = actionsText
+  public currenciesText = currenciesText
+
+  public signal: SignalModel = new SignalModel()
+  public signalState: SignalStateEnum = SignalStateEnum.Undefined
+  public addingStep: number = 0
 
   constructor(
     private traderService: TraderService,
@@ -26,12 +29,13 @@ export class AddSignalComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public selectCurrency(selectedCurrency: CurrencyEnum): void {
-    this.signal.currency = selectedCurrency
-  }
+  public onReady(): void {
+    if (this.addingStep % this.stepCount === this.stepCount - 2) {
+      this.signalState = SignalStateEnum.Adding
+      this.sendSignal()
+    }
 
-  public setAction(action: SignalActionEnum): void {
-    this.signal.setAction(action)
+    this.addingStep = (this.addingStep + 1) % this.stepCount
   }
 
   public sendSignal(): void {
@@ -44,10 +48,12 @@ export class AddSignalComponent implements OnInit {
 
     this.traderService.addSignal(this.signal, hash).subscribe(
       () => {
-        console.log('signal is added')
+        this.signalState = SignalStateEnum.Successed
+        this.signal.clear()
       },
       (error: any) => {
-        console.log('error on signal added: ', error)
+        this.signalState = SignalStateEnum.Failed
+        this.signal.clear()
       }
     )
   }

@@ -1,39 +1,43 @@
-<form (ngSubmit)="sendSignal()">
-    <div class="row form-group align-items-center">
-        <div class="col-md-3">
-            <div class="btn-group" role="group">
-                <button *ngFor="let currency of currencies"
-                        type="button"
-                        class="btn btn-secondary"
-                        [ngClass]="{'active': signal.currency === currency}"
-                        (click)="selectCurrency(currency)"
-                    >
-                        {{currenciesText[currency]}}
-                </button>
-            </div>
-        </div>
-        <div class="col-md-5">
-            <div class="row input-group m-0">
-                <div class="input-group-prepend">
-                    <label class="input-group-text col-form-label input-field justify-content-center" for="sum">Amount</label>
-                </div>
-                <input required type="number" class="form-control" id="sum" name="sum" min="0" [(ngModel)]="signal.amount">
-            </div>
-            <div class="row input-group m-0">
-                <div class="input-group-prepend">
-                    <label class="input-group-text col-form-label input-field justify-content-center" for="nonce">Nonce</label>
-                </div>
-                <input required type="number" class="form-control" id="nonce" name="nonce" [(ngModel)]="signal.nonce">
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="row">
-                <div *ngFor="let action of actions" class="col">
-                    <button type="submit" class="btn" [ngClass]="{'btn-danger': action === 0, 'btn-success': action === 1}" (click)="setAction(action)">
-                        <span class="p-3">{{actionsText[action]}}</span>
-                    </button>
-                </div>
-            </div>
+<div class="row">
+    <div class="col">
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading">New signal form</h4>
+            <p>To add new signal you need to fill out the form below</p>
+            <hr>
+            <p class="mb-0">Don't reload page until transaction is confirmed</p>
         </div>
     </div>
-</form>
+</div>
+<div class="row">
+    <!-- <div class="col-lg-3">
+    </div> -->
+    <!-- <div class="col-lg-6 border border-dark shadow-lg rounded-lg"> -->
+
+    <div class="col">
+        <div class="alert alert-dark border border-dark shadow-lg rounded-lg">
+            <ng-container *ngIf="addingStep === 0">
+                <app-action [signal]="signal" (ready)="onReady()"></app-action>
+            </ng-container>
+            <ng-container *ngIf="addingStep === 1">
+                <app-currency [signal]="signal" (ready)="onReady()"></app-currency>
+            </ng-container>
+            <ng-container *ngIf="addingStep === 2">
+                <app-amount [signal]="signal" (ready)="onReady()"></app-amount>
+            </ng-container>
+            <ng-container *ngIf="addingStep === 3">
+                <app-nonce [signal]="signal" (ready)="onReady()"></app-nonce>
+            </ng-container>
+            <ng-container *ngIf="addingStep === 4">
+                <app-final [signalState]="signalState" (ready)="onReady()"></app-final>
+            </ng-container>
+            <hr>
+            <p *ngIf="addingStep !== 4" class="mb-0">
+                <span class="mx-2">{{actionsText[signal.action] || '?'}}</span>
+                <span class="mx-2">{{signal.amount || '?'}}</span>
+                <span class="mx-2">{{currenciesText[signal.currency] || '?'}}</span>
+            </p>
+        </div>
+    </div>
+    <!-- <div class="col-lg-3">
+    </div> -->
+</div>

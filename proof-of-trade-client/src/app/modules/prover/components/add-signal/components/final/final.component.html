@@ -1,0 +1,26 @@
+<div class="row my-5">
+    <div class="col">
+        <ng-container *ngIf="signalState === 1; then addingTmpl; else addedTmpl"></ng-container>
+    </div>
+</div>
+<div class="row align-items-center my-5">
+    <div class="col">
+        <button class="btn btn-outline-dark" (click)="retry()">Retry?</button>
+    </div>
+</div>
+
+<ng-template #addingTmpl>
+    <h4 class="text-info">Signal is adding...</h4>
+</ng-template>
+
+<ng-template #addedTmpl>
+    <ng-container *ngIf="signalState === 2; then successedTmpl; else failedTmpl"></ng-container>
+</ng-template>
+
+<ng-template #successedTmpl>
+    <h4 class="text-success">Signal is successfully added!</h4>
+</ng-template>
+
+<ng-template #failedTmpl>
+    <h4 class="text-danger">Signal adding is failed</h4>
+</ng-template>

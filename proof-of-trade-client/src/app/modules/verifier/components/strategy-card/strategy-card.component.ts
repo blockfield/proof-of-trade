@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { VerificationTraderEnum, verificationTraderText } from 'src/app/core/enums/verification-trader.enum';
+import { VerificationProverEnum, verificationProverText } from 'src/app/core/enums/verification-trader.enum';
 import { ZkService } from 'src/app/modules/shared/services/zk.service';
 import { StrategyModel } from '../../models/strategy.model';
 
@@ -11,7 +11,7 @@ import { StrategyModel } from '../../models/strategy.model';
 export class StrategyCardComponent implements OnInit {
   @Input('strategy') strategy: StrategyModel
 
-  public verificationStatesText = verificationTraderText
+  public verificationStatesText = verificationProverText
 
   constructor(
     private zkService: ZkService
@@ -21,14 +21,14 @@ export class StrategyCardComponent implements OnInit {
   }
 
   public verifyTrader(): void {
-    this.strategy.setState(VerificationTraderEnum.Processing)
+    this.strategy.setState(VerificationProverEnum.Processing)
 
     this.zkService.verifyAll(this.strategy.address, this.strategy.proofIds).subscribe(
       (isSuccess: boolean) => {
-        this.strategy.setState(isSuccess ? VerificationTraderEnum.Success : VerificationTraderEnum.Failed)
+        this.strategy.setState(isSuccess ? VerificationProverEnum.Success : VerificationProverEnum.Failed)
       },
       (error: any) => {
-        this.strategy.setState(VerificationTraderEnum.Failed)
+        this.strategy.setState(VerificationProverEnum.Failed)
         console.log('verify period error: ', error)
       }
     )
