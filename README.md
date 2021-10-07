@@ -1,13 +1,18 @@
 # Proof Of Trade
-Zero knowledge proving system for historical performance of traders.
+Zero knowledge proving system for historical performance of trader.
 
+Build for [Solana Ignition Hackathon](https://solana.com/ignition).
 ## What is it
 One of the most common use cases of cryptocurrency is trading. There are a lot of traders which offer their service - education, signals or delegate trading. How can a person without any trading skills distinguish real professionals from scammers and bull market gurus?
 
-Historical performance of traders is the only reliable metric. So a method of trade performance proving is needed. It should be trustless - is builded on blockchain to achieve this. It should be private as traders don't want to reveal their trading activity - zero knowledge proof is used to achieve it.
+Historical performance is the only reliable metric. So a method of trade performance proving is needed. It should be trustless - is builded on blockchain to achieve this. It should be private as traders don't want to reveal their trading activity - zero knowledge proof is used to achieve it.
 
 ## How it works
 There are two parties: traders and users.
+
+<p align="center">
+    <img src="scheme.gif" alt="scheme" width="400" height="360">
+</p>
 
 Trader path:
 1. They register on the platform with their login, blockchain address and contact information. 
@@ -23,8 +28,10 @@ User can:
 External observers don't understand which signals a trader has made - it is private. All signals’ data are stored on a chain and reliable cryptography is used for performance proving - it is trustless.
 
 ## Technical details
-Solana smart contracts are used as backend. All functionality and data are stored in the Solana blockchain.
+[Solana](https://solana.com/) smart contracts are used as backend. All functionality and data are stored in the Solana blockchain.
 
-Zk part of the project is implemented using circom and wasmsnark libraries. These libraries generate wasm prover and verifier which allow generating and verifying proofs in web browser effectively. As proofs are generated and verified off chain it is free.
+Zk part of the project is implemented using [circom](https://github.com/iden3/circom) and [wasmsnark](https://github.com/iden3/wasmsnark) libraries. These libraries generate wasm prover and verifier which allow generating and verifying proofs in web browser effectively. As proofs are generated and verified off chain it is free.
 
-Client is the static web page which connects with the Solana blockchain using Phantom.
+Client is the static web page which connects with the Solana blockchain using [Phantom](https://phantom.app/).
+
+[Pyth](https://pyth.network/) onchain oracle is used as market data source.
