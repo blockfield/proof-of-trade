@@ -11,7 +11,7 @@ Historical performance is the only reliable metric. So a method of trade perform
 There are two parties: traders and users.
 
 <p align="center">
-    <img src="scheme.gif" alt="scheme" width="400" height="360">
+    <img src="scheme.gif" alt="scheme" width="450" height="400">
 </p>
 
 Trader path:
