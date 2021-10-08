@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { currencies, currenciesText, CurrencyEnum } from 'src/app/core/enums/currency.enum';
 import { actions, actionsText, SignalActionEnum } from 'src/app/core/enums/signal-action.enum';
 import { SignalStateEnum } from 'src/app/core/enums/signal-state.enum';
-import { SignalModel } from '../../models/signal.model';
-import { SignalService } from '../../services/signal.service';
-import { TraderService } from '../../services/trader.service';
+import { SignalModel } from '../../../../models/signal.model';
+import { SignalService } from '../../../../services/signal.service';
+import { TraderService } from '../../../../services/trader.service';
 
 @Component({
   selector: 'app-add-signal',
@@ -12,6 +12,8 @@ import { TraderService } from '../../services/trader.service';
   styleUrls: ['./add-signal.component.less']
 })
 export class AddSignalComponent implements OnInit {
+  @Output() signalAdded = new EventEmitter<SignalModel>()
+
   private stepCount = 5
 
   public actionsText = actionsText
@@ -49,6 +51,12 @@ export class AddSignalComponent implements OnInit {
     this.traderService.addSignal(this.signal, hash).subscribe(
       () => {
         this.signalState = SignalStateEnum.Successed
+        this.signalAdded.emit(new SignalModel(
+          this.signal.currency,
+          this.signal.amount,
+          this.signal.nonce,
+          this.signal.action)
+        )
         this.signal.clear()
       },
       (error: any) => {

@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { map, mergeMap, tap } from 'rxjs/operators';
 import { currencies, currenciesText, CurrencyEnum } from 'src/app/core/enums/currency.enum';
 import { actions, actionsText, SignalActionEnum } from 'src/app/core/enums/signal-action.enum';
-import { ProofItem } from '../../models/proof-item';
-import { ProofModel } from '../../models/proof.model';
-import { TraderService } from '../../services/trader.service';
+import { ProofItem } from '../../../../models/proof-item';
+import { ProofModel } from '../../../../models/proof.model';
+import { SignalModel } from '../../../../models/signal.model';
+import { TraderService } from '../../../../services/trader.service';
 
 @Component({
   selector: 'app-generate-proof',
@@ -16,11 +18,7 @@ export class GenerateProofComponent implements OnInit {
   public actions: SignalActionEnum[] = actions
   public actionsText = actionsText
 
-  public model: ProofModel = new ProofModel(
-    null, null, [
-    new ProofItem(0, this.currencies[0], SignalActionEnum.Buy),
-    new ProofItem(1, this.currencies[0], SignalActionEnum.Buy),
-  ])
+  public model: ProofModel = new ProofModel(null, null, [])
 
   constructor(
     private traderService: TraderService,
@@ -49,23 +47,19 @@ export class GenerateProofComponent implements OnInit {
 
   public generateProof(): void {
     if (this.model.usdBalance === null || this.model.ethBalance === null) {
-      console.log('empty init balance for uds and eth')
+      console.log('empty init balance for usd and eth')
       return
     }
 
-    let isModellValid = true
-    this.model.proofs.forEach(function (data: ProofItem) {
-      if (!data || !data.amount || !data.currency || !data.nonce) {
-        console.log('none filled row:')
-        isModellValid = false
-      }
-    });
-
-    if (!isModellValid) {
-      return
-    }
-
-    this.traderService.addPeriodProof(this.model).subscribe(
+    this.traderService.getSignals().pipe(
+      map(
+        (signals: SignalModel[]) => signals.map(
+          (x, index) => new ProofItem(index, x.currency, x.action, x.amount,x.nonce)
+        )
+      ),
+      tap((proof: ProofItem[]) => { this.model.proofs = proof }),
+      mergeMap(() => this.traderService.addPeriodProof(this.model))
+    ).subscribe(
       () => {
         console.log('period added')
       },

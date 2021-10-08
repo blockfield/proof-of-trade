@@ -1,8 +1,41 @@
 <div class="row m-3">
     <div class="col-xl text-center">
-        <app-add-signal></app-add-signal>
+        <app-add-signal (signalAdded)="onSignalAdded($event)"></app-add-signal>
     </div>
     <div class="col-xl text-center">
-        list of signals
+        <div class="row">
+            <div class="col">
+                №
+            </div>
+            <div class="col">
+                Action
+            </div>
+            <div class="col">
+                Amount
+            </div>
+            <div class="col">
+                Nonce
+            </div>
+            <div class="col">
+                Currency
+            </div>
+        </div>
+        <div *ngFor="let signal of signals; let i = index" class="row">
+            <div class="col">
+                {{i}}
+            </div>
+            <div class="col">
+                {{actionsText[signal.action]}}
+            </div>
+            <div class="col">
+                {{signal.amount}}
+            </div>
+            <div class="col">
+                {{signal.nonce}}
+            </div>
+            <div class="col">
+                {{currenciesText[signal.currency]}}
+            </div>
+        </div>
     </div>
 </div>
