@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
 import { from, Observable, Subject } from 'rxjs';
 import { VerificationProverEnum } from 'src/app/core/enums/verification-trader.enum';
-import { SmartContractInterface } from '../interfaces/smart-contract.interface';
-import { TraderModel } from '../models/trader.model';
-import { StrategyModel } from '../../verifier/models/strategy.model';
+import { SmartContractInterface } from '../../shared/interfaces/smart-contract.interface';
+import { TraderModel } from '../../shared/models/trader.model';
+import { StrategyModel } from '../models/strategy.model';
 import { ProofItem } from '../models/proof-item';
 
 @Injectable({

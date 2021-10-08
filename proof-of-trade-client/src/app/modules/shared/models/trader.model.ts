@@ -1,4 +1,4 @@
-import { ProofItem } from "./proof-item";
+import { ProofItem } from "../../verifier/models/proof-item";
 
 export class TraderModel {
     constructor(

@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ProofItem } from '../../models/proof-item';
+import { TraderService } from '../../services/trader.service';
 
 @Component({
   selector: 'app-proof',
@@ -6,10 +8,22 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./proof.component.less']
 })
 export class ProofComponent implements OnInit {
+  public proof: ProofItem[]
 
-  constructor() { }
+  constructor(
+    private traderService: TraderService,
+  ) { }
 
   ngOnInit(): void {
+    this.initProof()
+  }
+
+  private initProof(): void {
+    this.traderService.getProofList().subscribe(
+      (proof: ProofItem[]) => {
+        this.proof = proof
+      }
+    )
   }
 
 }

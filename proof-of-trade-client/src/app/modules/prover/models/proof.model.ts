@@ -1,5 +1,6 @@
-import { ProofItem } from "./proof-item";
 import { ProofModel as ZkProofModel } from "src/app/modules/shared/models/proof.model";
+import { CurrencyEnum } from "src/app/core/enums/currency.enum";
+import { SignalActionEnum } from "src/app/core/enums/signal-action.enum";
 
 export class ProofModel {
     constructor(
@@ -21,4 +22,14 @@ export class ProofModel {
             }})
         }
     }
+}
+
+export class ProofItem {
+    constructor(
+        public id: number,
+        public currency: CurrencyEnum,
+        public action: SignalActionEnum,
+        public amount: number|null = null,
+        public nonce: number|null = null
+    ) {}
 }

@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { map, mergeMap, tap } from 'rxjs/operators';
 import { currencies, currenciesText, CurrencyEnum } from 'src/app/core/enums/currency.enum';
 import { actions, actionsText, SignalActionEnum } from 'src/app/core/enums/signal-action.enum';
-import { ProofItem } from '../../../../models/proof-item';
-import { ProofModel } from '../../../../models/proof.model';
+import { ProofItem, ProofModel } from '../../../../models/proof.model';
 import { SignalModel } from '../../../../models/signal.model';
 import { TraderService } from '../../../../services/trader.service';
 

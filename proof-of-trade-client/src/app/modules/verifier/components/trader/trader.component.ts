@@ -4,7 +4,7 @@ import { faCopy } from '@fortawesome/free-regular-svg-icons';
 import { NgxSpinnerService } from "ngx-spinner";
 
 import { verificationProofText } from 'src/app/core/enums/verification-proof.enum';
-import { TradersService } from 'src/app/modules/shared/services/traders.service';
+import { TradersService } from 'src/app/modules/verifier/services/traders.service';
 import { ZkService } from 'src/app/modules/shared/services/zk.service';
 import { TraderModel } from '../../../shared/models/trader.model';
 

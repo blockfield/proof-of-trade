@@ -1,6 +1,12 @@
 <div class="row m-3">
     <div class="col-xl text-center">
-        list of proofs
+        <table class="table table-bordered m-1 w-100">
+            <tbody>
+                <tr *ngFor="let proofItem of proof">
+                    <td class="align-middle text-center" [ngClass]="{'table-success': proofItem.percentage > 0, 'table-danger': proofItem.percentage < 0}">Profit: {{proofItem.percentage | number : '1.2-2'}}%</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     <div class="col-xl text-center">
         <app-generate-proof></app-generate-proof>

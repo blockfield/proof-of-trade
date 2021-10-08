@@ -3,7 +3,9 @@ import { from, Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { StorageService } from 'src/app/core/services/storage.service';
 import { SmartContractInterface } from '../../shared/interfaces/smart-contract.interface';
+import { WalletService } from '../../shared/services/wallet.service';
 import { ZkService } from '../../shared/services/zk.service';
+import { ProofItem } from '../models/proof-item';
 import { ProofModel } from '../models/proof.model';
 import { SignalModel } from '../models/signal.model';
 
@@ -16,11 +18,36 @@ export class TraderService {
   constructor(
     @Inject('SmartContractInterface') private contract: SmartContractInterface,
     private storageService: StorageService,
+    private walletService: WalletService,
     private zkService: ZkService
   ) { }
 
   public addTrader(email: string): Observable<void> {
     return from(this.contract.newTrader(email))
+  }
+
+  public getProofList(): Observable<ProofItem[]> {
+    return from(this.getProof())
+  }
+
+  private async getProof(): Promise<ProofItem[]> {
+    const address = this.walletService.getAddress()
+    const proofLen = await this.contract.getProofLen(address)
+    const initBalance = 1000
+
+    let proof: ProofItem[] = []
+    for (let j = 0; j < proofLen; j++) {
+      let balance = (await this.contract.getPeriodProofs(address, j)).y
+
+      let prevProofBalance = initBalance
+      if (j !== 0) {
+        prevProofBalance = (await this.contract.getPeriodProofs(address, j-1)).y
+      }
+
+      proof.push(new ProofItem(j, balance, prevProofBalance))
+    }
+
+    return proof
   }
 
   public addSignal(signal: SignalModel, hash: string): Observable<void> {

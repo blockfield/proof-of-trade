@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgxSpinnerService } from "ngx-spinner";
 
 import { StrategyModel } from '../../models/strategy.model';
-import { TradersService } from '../../../shared/services/traders.service';
+import { TradersService } from '../../services/traders.service';
 
 @Component({
   selector: 'app-strategies',
