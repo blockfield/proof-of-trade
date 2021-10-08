@@ -25,7 +25,7 @@ export class SignalsComponent implements OnInit {
 
   public initSignals(): void {
     // todo can we use here just `public signals$`. Is new signal will be added?
-    this.traderService.getSignals().subscribe(
+    this.traderService.getMySignals().subscribe(
       (signals: SignalModel[]) => {
         this.signals = signals
       },
@@ -36,6 +36,10 @@ export class SignalsComponent implements OnInit {
   }
 
   public onSignalAdded(signal: SignalModel): void {
+    if (!this.signals) {
+      this.signals = []
+    }
+    
     this.signals.push(signal)
   }
 

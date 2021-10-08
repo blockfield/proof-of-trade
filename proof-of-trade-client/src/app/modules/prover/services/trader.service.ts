@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { filter, map, mergeMap, take, tap } from 'rxjs/operators';
 import { StorageService } from 'src/app/core/services/storage.service';
 import { SmartContractInterface } from '../../shared/interfaces/smart-contract.interface';
 import { WalletService } from '../../shared/services/wallet.service';
@@ -8,6 +8,7 @@ import { ZkService } from '../../shared/services/zk.service';
 import { ProofItem } from '../models/proof-item';
 import { ProofModel } from '../models/proof.model';
 import { SignalModel } from '../models/signal.model';
+import { StorageSignalModel } from '../models/storage-signal.model';
 
 @Injectable({
   providedIn: 'root'
@@ -51,29 +52,46 @@ export class TraderService {
   }
 
   public addSignal(signal: SignalModel, hash: string): Observable<void> {
-    return from(this.contract.addSignal(hash))
-      .pipe(
-        mergeMap(() => this.getSignals()),
-        mergeMap((signals: SignalModel[]) => {
-          signals.push(signal)
+    return from(this.contract.addSignal(hash)).pipe(
+      mergeMap(() => this.getSignalsMap()),
+      map((signalsMap: {[address: string]: SignalModel[]}) => signalsMap || {}),
+      tap((signalsMap: {[address: string]: SignalModel[]}) => {
+        let signals = signalsMap[this.walletService.getAddress()]
+        if (!signals) {
+          signals = []
+        }
 
-          return this.storageService.set(this.signalsKey, signals)
-        })
-      )
+        signals.push(signal)
+
+        signalsMap[this.walletService.getAddress()] = signals
+
+        return signalsMap
+      }),
+      mergeMap((signalsMap: {[address: string]: SignalModel[]}) => {
+        return this.storageService.set(
+          this.signalsKey,
+          signalsMap
+        )
+      })
+    )
   }
 
-  public getSignals(): Observable<SignalModel[]> {
-    return this.storageService.get<any[]>(this.signalsKey).pipe(
+  public getMySignals(): Observable<SignalModel[]> {
+    return this.getSignalsMap().pipe(
       map(
-        (signals: any[]) => {
-          if (signals && signals.length > 0) {
-            return signals.map(x => new SignalModel(x.currency, x.amount, x.nonce, x.action))
-          }
-
-          return []
-        }
+        (signalsMap: {[address: string]: SignalModel[]}) => signalsMap || {}
+      ),
+      map(
+        (signalsMap: {[address: string]: SignalModel[]}) => signalsMap[this.walletService.getAddress()] || []
+      ),
+      map(
+        (signals: SignalModel[]) => signals.map(x => new SignalModel(x.currency, x.amount, x.nonce, x.action))
       )
     )
+  }
+
+  private getSignalsMap(): Observable<{[address: string]: SignalModel[]}> {
+    return this.storageService.get<{[address: string]: SignalModel[]}>(this.signalsKey)
   }
 
   public addPeriodProof(model: ProofModel): Observable<void> {

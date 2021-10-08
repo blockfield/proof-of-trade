@@ -32,7 +32,7 @@ export class GenerateProofComponent implements OnInit {
       return
     }
 
-    this.traderService.getSignals().pipe(
+    this.traderService.getMySignals().pipe(
       map(
         (signals: SignalModel[]) => signals.map(
           (x, index) => new ProofItem(index, x.currency, x.action, x.amount,x.nonce)
