@@ -1,6 +1,8 @@
 import { Location } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { from } from 'rxjs';
+import { NgxSpinnerService } from "ngx-spinner";
+
 import { MenuService } from 'src/app/core/services/menu.service';
 import { SmartContractInterface } from '../shared/interfaces/smart-contract.interface';
 import { WalletService } from '../shared/services/wallet.service';
@@ -18,11 +20,13 @@ export class ProverComponent implements OnInit {
     @Inject('SmartContractInterface') private contract: SmartContractInterface,
     private location: Location,
     private menuService: MenuService,
+    private spinner: NgxSpinnerService,
     private walletService: WalletService
   ) { }
 
   ngOnInit(): void {
     this.initEmail()
+    this.initSpinner()
   }
 
   private initMenu(): void {
@@ -36,11 +40,17 @@ export class ProverComponent implements OnInit {
       (email: string) => {
         this.email = email
 
+        this.spinner.hide()
+
         if (email) {
           this.initMenu()
         }
       }
     )
+  }
+
+  private initSpinner(): void {
+    this.spinner.show()
   }
 
   public onTraderAdded(email: string): void {

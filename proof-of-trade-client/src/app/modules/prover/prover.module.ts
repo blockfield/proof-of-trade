@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgxSpinnerModule } from "ngx-spinner";
 
 import { ProverRoutingModule } from './prover-routing.module';
 import { ProverComponent } from './prover.component';
@@ -40,6 +41,7 @@ import { FinalComponent } from './components/signals/components/add-signal/compo
     FormsModule,
     ProverRoutingModule,
     SharedModule.withProviders(Contract, MetaMaskProvider),
+    NgxSpinnerModule,
   ]
 })
 export class ProverModule { }

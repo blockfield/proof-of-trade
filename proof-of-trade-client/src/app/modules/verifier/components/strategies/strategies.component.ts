@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { NgxSpinnerService } from "ngx-spinner";
+
 import { StrategyModel } from '../../models/strategy.model';
-import { TradersService } from '../../services/traders.service';
+import { TradersService } from '../../../shared/services/traders.service';
 
 @Component({
   selector: 'app-strategies',
@@ -11,11 +13,13 @@ export class StrategiesComponent implements OnInit {
   strategies: StrategyModel[]
 
   constructor(
+    private spinner: NgxSpinnerService,
     private tradersService: TradersService,
   ) { }
 
   ngOnInit(): void {
     this.initStrategies()
+    this.initSpinner()
   }
 
   private initStrategies(): void {
@@ -26,8 +30,14 @@ export class StrategiesComponent implements OnInit {
         }
         
         this.strategies.push(strategy)
+        
+        this.spinner.hide()
       }
     )
+  }
+
+  private initSpinner(): void {
+    this.spinner.show()
   }
 
 }

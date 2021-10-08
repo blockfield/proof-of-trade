@@ -27,24 +27,6 @@ export class GenerateProofComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public selectCurrency(proofId: number, selectedCurrency: CurrencyEnum): void {
-    let proof = this.model.proofs[proofId]
-    if (!proof) {
-      return
-    }
-
-    proof.currency = selectedCurrency
-  }
-
-  public selectAction(proofId: number, action: SignalActionEnum): void {
-    let proof = this.model. proofs[proofId]
-    if (!proof) {
-      return
-    }
-
-    proof.action = action
-  }
-
   public generateProof(): void {
     if (this.model.usdBalance === null || this.model.ethBalance === null) {
       console.log('empty init balance for usd and eth')

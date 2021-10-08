@@ -1,18 +1,7 @@
 <ng-container *ngIf="strategies === undefined; then loadingTmpl; else loadedTmpl"></ng-container>
 
 <ng-template #loadingTmpl>
-    <div class="card-deck justify-content-center m-0">
-        <div class="card text-center bg-light m-3 loading">
-            <div class="card-header bg-dark">
-                <span class="text-light"> Loading... </span>
-            </div>
-            <div class="card-body">
-                <div class="row d-flex justify-content-center">
-                    Please, wait
-                </div>
-            </div>
-        </div>
-    </div>
+    <ngx-spinner [bdColor]="'#eeeeee'" [color]="'#000000'" [fullScreen]="false"></ngx-spinner>
 </ng-template>
 
 <ng-template #loadedTmpl>

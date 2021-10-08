@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MenuService } from 'src/app/core/services/menu.service';
 import { StrategyModel } from './models/strategy.model';
-import { TradersService } from './services/traders.service';
+import { TradersService } from '../shared/services/traders.service';
 
 @Component({
   selector: 'app-verifier',

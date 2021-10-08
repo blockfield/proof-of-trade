@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { VerificationProverEnum, verificationProverText } from 'src/app/core/enums/verification-trader.enum';
 import { ZkService } from 'src/app/modules/shared/services/zk.service';
-import { StrategyModel } from '../../models/strategy.model';
+import { StrategyModel } from '../../../../models/strategy.model';
 
 @Component({
   selector: 'app-strategy-card',

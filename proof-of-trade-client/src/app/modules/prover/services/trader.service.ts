@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
-import { asapScheduler, from, Observable, scheduled } from 'rxjs';
-import { filter, flatMap, map, mergeMap, tap } from 'rxjs/operators';
-import { CurrencyEnum } from 'src/app/core/enums/currency.enum';
+import { from, Observable } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 import { StorageService } from 'src/app/core/services/storage.service';
 import { SmartContractInterface } from '../../shared/interfaces/smart-contract.interface';
 import { ZkService } from '../../shared/services/zk.service';

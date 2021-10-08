@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@angular/core';
 import { from, Observable, Subject } from 'rxjs';
 import { VerificationProverEnum } from 'src/app/core/enums/verification-trader.enum';
-import { SmartContractInterface } from '../../shared/interfaces/smart-contract.interface';
-import { ProofItem } from '../models/proof-item';
-import { StrategyModel } from '../models/strategy.model';
+import { SmartContractInterface } from '../interfaces/smart-contract.interface';
 import { TraderModel } from '../models/trader.model';
+import { StrategyModel } from '../../verifier/models/strategy.model';
+import { ProofItem } from '../models/proof-item';
 
 @Injectable({
   providedIn: 'root'
@@ -12,22 +12,14 @@ import { TraderModel } from '../models/trader.model';
 export class TradersService {
 
   constructor(
-    @Inject('SmartContractInterface') private contract: SmartContractInterface
+    @Inject('SmartContractInterface') private contract: SmartContractInterface,
   ) {}
 
   public getTrader(index: number): Observable<TraderModel> {
     return from(this.getTraderModel(index))
   }
 
-  public getTraders(): Observable<StrategyModel> {
-    let tradersSubject = new Subject<StrategyModel>();
-
-    (async () => await this.nextTrader(tradersSubject))()
-
-    return tradersSubject
-  }
-
-  private async getTraderModel(index: number): Promise<TraderModel> {
+  public async getTraderModel(index: number): Promise<TraderModel> {
     const address = await this.contract.getTrader(index)
     const email = await this.contract.getEmail(address)
     const proofLen = await this.contract.getProofLen(address)
@@ -48,6 +40,14 @@ export class TradersService {
     }
 
     return new TraderModel(index, email, address, proof, createdDate)
+  }
+
+  public getTraders(): Observable<StrategyModel> {
+    let tradersSubject = new Subject<StrategyModel>();
+
+    (async () => await this.nextTrader(tradersSubject))()
+
+    return tradersSubject
   }
 
   private async nextTrader(tradersSubject: Subject<StrategyModel>): Promise<void> {

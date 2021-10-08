@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
+import { NgxSpinnerService } from "ngx-spinner";
+
 import { verificationProofText } from 'src/app/core/enums/verification-proof.enum';
+import { TradersService } from 'src/app/modules/shared/services/traders.service';
 import { ZkService } from 'src/app/modules/shared/services/zk.service';
-import { TraderModel } from '../../models/trader.model';
-import { TradersService } from '../../services/traders.service';
+import { TraderModel } from '../../../shared/models/trader.model';
 
 @Component({
   selector: 'app-trader',
@@ -18,6 +20,7 @@ export class TraderComponent implements OnInit {
   public trader: TraderModel
 
   constructor(
+    private spinner: NgxSpinnerService,
     private route: ActivatedRoute,
     private tradersService: TradersService,
     private zkService: ZkService,
@@ -25,6 +28,7 @@ export class TraderComponent implements OnInit {
 
   ngOnInit(): void {
     this.initTrader()
+    this.initSpinner()
   }
 
   private initTrader(): void {
@@ -34,9 +38,14 @@ export class TraderComponent implements OnInit {
       this.tradersService.getTrader(traderId).subscribe(
         (trader: TraderModel) => {
           this.trader = trader
+          this.spinner.hide()
         }
       )
     })
+  }
+
+  private initSpinner(): void {
+    this.spinner.show()
   }
 
   public verifyProof(proofId: number): void {
