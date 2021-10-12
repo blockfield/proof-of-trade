@@ -20,26 +20,29 @@ export class TradersService {
   }
 
   public async getTraderModel(index: number): Promise<TraderModel> {
-    const address = await this.contract.getTrader(index)
-    const email = await this.contract.getEmail(address)
-    const proofLen = await this.contract.getProofLen(address)
+    const trader = await this.contract.getTrader(index)
 
-    const createdDate = new Date(2021, 7, 1, 15, 0, 0)
-    const initBalance = 1000
-
-    let proof: ProofItem[] = []
-    for (let j = 0; j < proofLen; j++) {
-      let balance = (await this.contract.getPeriodProofs(address, j)).y
-
-      let prevProofBalance = initBalance
-      if (j !== 0) {
-        prevProofBalance = (await this.contract.getPeriodProofs(address, j-1)).y
-      }
-
-      proof.push(new ProofItem(j, balance, prevProofBalance))
+    let periodProofList = []
+    for (let j = 0; j < Math.floor(trader.proofsCount / 10) + 1; j++) {
+      periodProofList = [...periodProofList, ...(await this.contract.getPeriodProofsPage(trader.address, j))]
     }
 
-    return new TraderModel(index, email, address, proof, createdDate)
+    let proof: ProofItem[] = []
+    let prevProofBalance = 1000
+    let prevTimestamp = await this.contract.getTimestampByBlockNumber(trader.creationBlockNumber)
+    const createdDate = new Date(prevTimestamp)
+    for (let i = 0; i < periodProofList.length; i++) {
+      const periodProof = periodProofList[i]
+
+      const currentTimestamp = await this.contract.getTimestampByBlockNumber(periodProof.blockNumber)
+
+      proof.push(new ProofItem(i, periodProof.y, prevProofBalance, new Date(prevTimestamp), new Date(currentTimestamp)))
+
+      prevProofBalance = periodProof.y
+      prevTimestamp = currentTimestamp
+    }
+
+    return new TraderModel(index, trader.email, trader.address, proof, createdDate)
   }
 
   public getTraders(): Observable<StrategyModel> {
@@ -57,19 +60,19 @@ export class TradersService {
     for (let i = 0; i < tradersCount; i++) {
       const traderModel = await this.getTraderModel(i)
 
-      const createdDate = new Date(2021, 7, 1, 15, 0, 0)
+      const createdDate = traderModel.date
       const initBalance = 1000
 
       let profitSum = 0
       let proofCount = 0
       let proofIds = []
       for (let j = 0; j < traderModel.proof.length; j++) {
-        profitSum += (traderModel.proof[j].balance - traderModel.proof[j].prevBalance)
+        profitSum += (traderModel.proof[j].yieldNumber - traderModel.proof[j].prevYieldNumber)
         proofCount++
         proofIds.push(j)
       }
 
-      const monthDiffForAvg = this.monthDiff(createdDate, now) ?? 1
+      const monthDiffForAvg = this.monthDiff(createdDate, now) || 1
       const avgProfitPerMonth = 100 * (profitSum / initBalance) / monthDiffForAvg
       const avgProofCountPerMonth = proofCount / monthDiffForAvg
 

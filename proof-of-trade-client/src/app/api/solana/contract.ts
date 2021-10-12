@@ -1,237 +1,147 @@
 import { Injectable } from "@angular/core";
-import * as solanaWeb3 from '@solana/web3.js';
-import { PeriodProofResponseInterface, SignalResponseInterface, SmartContractInterface, WitnessProofRequestInterface } from "src/app/modules/shared/interfaces/smart-contract.interface";
+import * as BN from 'bn.js';
+import { PeriodProofResponseInterface, SignalResponseInterface, SmartContractInterface, TraderResponseInterface, WitnessProofRequestInterface } from "src/app/modules/shared/interfaces/smart-contract.interface";
 import { WalletService } from "src/app/modules/shared/services/wallet.service";
+import { Proof, SolanaWeb3Contract } from "./solana-web3-contract";
 
 @Injectable({
     providedIn: 'root'
 })
-export class Contract implements SmartContractInterface {
-    private programId = new solanaWeb3.PublicKey('9mgarPvbWJrMghTVAk8E9bAC5vpXPyhEFGAubBKsiko6')
-    private rpcEndpoint = 'https://api.testnet.solana.com'
-    private commitment: solanaWeb3.Commitment = 'confirmed'
-    private tradersSeed = 'traders_list'
-    private traderSeed = 'trader'
-    private signalSeed = 'signal_1'
-    private proofSeed = 'proof_1'
-
-    private connection: solanaWeb3.Connection
-    private myPK: solanaWeb3.PublicKey
-    private provider: any
-
+export class Contract extends SolanaWeb3Contract implements SmartContractInterface {
     constructor(walletService: WalletService) {
-        this.connection = new solanaWeb3.Connection(this.rpcEndpoint, this.commitment)
-        this.myPK = new solanaWeb3.PublicKey(walletService.getAddress())
-        this.provider = (window as any).solana
+        super(walletService.getAddress())
     }
 
     public async newTrader(email: string): Promise<void> {
-        let [traderPK, _] = await solanaWeb3.PublicKey.findProgramAddress(
-            [ this.myPK.toBuffer(), Buffer.from(this.traderSeed)],
-            this.programId
-        );
-
-        let bMethodId = Buffer.from([ 0 ]);
-        let bEmail = Buffer.from(email);
-
-        // todo Move out to instruction builder
-        const instructionLength = 65
-        let instructionData = Buffer.concat([
-                bMethodId,
-                Buffer.alloc(instructionLength - bMethodId.length - bEmail.length),
-                bEmail
-            ],
-            instructionLength
-        )
-
-        const instruction = new solanaWeb3.TransactionInstruction({
-            keys : [
-                {pubkey : this.myPK, isSigner : true, isWritable : false},
-                {pubkey : traderPK, isSigner : false, isWritable : true},
-                /* todo change pubkey! */ {pubkey : traderPK, isSigner : false, isWritable : true},
-                {pubkey : solanaWeb3.SystemProgram.programId, isSigner : false, isWritable : false},
-                {pubkey : solanaWeb3.SYSVAR_RENT_PUBKEY, isSigner : false, isWritable : false}
-            ],
-            programId: this.programId,
-            data : instructionData,
-        });
-
-        // todo Move out to base method
-        const recentBlock = await this.connection.getRecentBlockhash(this.commitment)
-
-        const signedTransaction = await this.provider.signTransaction(
-            new solanaWeb3.Transaction({
-                recentBlockhash: recentBlock.blockhash,
-                feePayer: this.myPK
-            }).add(instruction)
-        );
-
-        const traderCreatedSignature = await this.connection.sendRawTransaction(signedTransaction.serialize());
-
-        await this.connection.confirmTransaction(traderCreatedSignature);
+        await this.createTraderAction(email)
     }
 
     public async addSignal(hash: string): Promise<void> {
-        let [traderPK, _] = await solanaWeb3.PublicKey.findProgramAddress(
-            [ this.myPK.toBuffer(), Buffer.from(this.signalSeed)],
-            this.programId
-        );
+        let prices: bigint[] = []
 
-        let bMethodId = Buffer.from([ 1 ], null, 32);
-        let bBLockNumber = Buffer.from(Array(8).fill(0));
-        let bHash = Buffer.from(hash, null, 32);
+        await this.addSignalAction({
+            blockNumber: BigInt(0),
+            hash: (new BN(hash)).toBuffer(),
+            prices: prices,
+        })
+    }
 
-        // todo Move out to instruction builder
-        const instructionLength = 41
-        let instructionData = Buffer.concat([
-                bMethodId,
-                bBLockNumber,
-                bHash
+    public async getTradeLen(): Promise<number> {
+        return Number((await this.getTraderAction(this.myPK.toString())).signalsCount)
+    }
+
+    public async getSignal(address: string, index: number): Promise<SignalResponseInterface> {
+        let signals = await this.getSignalsFromPageAction(address, BigInt(Math.floor(index/10)))
+        const signal = signals[index % 10]
+
+        return {
+            blockNumber: Number(signal.blockNumber),
+            hash: (new BN(signal.hash)).toString(),
+            price: Number(signal.prices[0])
+        }
+    }
+
+    public async getProofLen(address: string): Promise<number> {
+        return Number((await this.getTraderAction(address)).proofsCount)
+    }
+
+    public async getPrevBalanceHash(address: string, index: number): Promise<string> {
+        const proof = await this.getPeriodProofs(address, index)
+
+        return proof.newBalanceHash
+    }
+
+    public async addPeriodProof(witnessProof: WitnessProofRequestInterface): Promise<void> {
+         await this.addProofAction({
+            pi_a: [Buffer.from(witnessProof.pi_a[0]), Buffer.from(witnessProof.pi_a[1])],
+            pi_b: [
+                [Buffer.from(witnessProof.pi_b[0][0]), Buffer.from(witnessProof.pi_b[0][1])],
+                [Buffer.from(witnessProof.pi_b[1][0]), Buffer.from(witnessProof.pi_b[1][1])]
             ],
-            instructionLength
-        )
-
-        const instruction = new solanaWeb3.TransactionInstruction({
-            keys : [
-                {pubkey : this.myPK, isSigner : true, isWritable : false},
-                {pubkey : traderPK, isSigner : false, isWritable : true},
-                /* todo change pubkey! */ {pubkey : traderPK, isSigner : false, isWritable : true},
-                {pubkey : solanaWeb3.SystemProgram.programId, isSigner : false, isWritable : false},
-                {pubkey : solanaWeb3.SYSVAR_RENT_PUBKEY, isSigner : false, isWritable : false}
-            ],
-            programId: this.programId,
-            data : instructionData,
-        });
-
-        // todo Move out to base method
-        const recentBlock = await this.connection.getRecentBlockhash(this.commitment)
-
-        const signedTransaction = await this.provider.signTransaction(
-            new solanaWeb3.Transaction({
-                recentBlockhash: recentBlock.blockhash,
-                feePayer: this.myPK
-            }).add(instruction)
-        );
-
-        const signalAddedSignature = await this.connection.sendRawTransaction(signedTransaction.serialize());
-
-        await this.connection.confirmTransaction(signalAddedSignature);
+            pi_c: [Buffer.from(witnessProof.pi_a[0]), Buffer.from(witnessProof.pi_a[1])],
+            pnl: witnessProof.publicSignals[1],
+            blockNumber: BigInt(0),
+            newBalanceHash: (new BN(witnessProof.publicSignals[0])).toBuffer(),
+            prices: []
+        })
     }
 
-    getTradeLen(): Promise<number> {
-        throw new Error("Method not implemented.");
+    public async currentAnswer(blockNumber: number): Promise<number> {
+        console.log('currentAnswer', 'i do not know that is here')
+
+        return 150
     }
 
-    getSignal(address: string, index: number): Promise<SignalResponseInterface> {
-        throw new Error("Method not implemented.");
-    }
+    public async getBlockNumber(): Promise<number> {
+        console.log('getBlockNumber', 'i do not know that is here')
 
-    getProofLen(address: string): Promise<number> {
-        throw new Error("Method not implemented.");
-    }
-
-    getPrevBalanceHash(address: string, index: number): Promise<string> {
-        throw new Error("Method not implemented.");
-    }
-
-    public async addPeriodProof(witnessProof: WitnessProofRequestInterface, currentBlock: number): Promise<void> {
-        let [traderPK, _] = await solanaWeb3.PublicKey.findProgramAddress(
-            [ this.myPK.toBuffer(), Buffer.from(this.proofSeed)],
-            this.programId
-        );
-
-        let bMethodId = Buffer.from([ 2 ], null, 32);
-        let bPiA0 = Buffer.from(witnessProof.pi_a[0], null, 32);
-        let bPiA1 = Buffer.from(witnessProof.pi_a[1], null, 32);
-        let bPiB00 = Buffer.from(witnessProof.pi_b[0][0], null, 32);
-        let bPiB01 = Buffer.from(witnessProof.pi_b[0][1], null, 32);
-        let bPiB10 = Buffer.from(witnessProof.pi_b[1][0], null, 32);
-        let bPiB11 = Buffer.from(witnessProof.pi_b[1][1], null, 32);
-        let bPiC0 = Buffer.from(witnessProof.pi_c[0], null, 32);
-        let bPiC1 = Buffer.from(witnessProof.pi_c[1], null, 32);
-        let bPnl = Buffer.from(Array(4).fill(0));
-        let bBLockNumber = Buffer.from(Array(8).fill(0));
-        let bHash = Buffer.from(Array(32).fill(0));
-
-        // todo Move out to instruction builder
-        const instructionLength = 301
-        let instructionData = Buffer.concat([
-                bMethodId,
-                bPiA0, bPiA1,
-                bPiB00, bPiB01, bPiB10, bPiB11,
-                bPiC0, bPiC1,
-                bPnl, bBLockNumber, bHash
-            ],
-            instructionLength
-        )
-
-        const instruction = new solanaWeb3.TransactionInstruction({
-            keys : [
-                {pubkey : this.myPK, isSigner : true, isWritable : false},
-                {pubkey : traderPK, isSigner : false, isWritable : true},
-                /* todo change pubkey! */ {pubkey : traderPK, isSigner : false, isWritable : true},
-                {pubkey : solanaWeb3.SystemProgram.programId, isSigner : false, isWritable : false},
-                {pubkey : solanaWeb3.SYSVAR_RENT_PUBKEY, isSigner : false, isWritable : false}
-            ],
-            programId: this.programId,
-            data : instructionData,
-        });
-
-        // todo Move out to base method
-        const recentBlock = await this.connection.getRecentBlockhash(this.commitment)
-
-        const signedTransaction = await this.provider.signTransaction(
-            new solanaWeb3.Transaction({
-                recentBlockhash: recentBlock.blockhash,
-                feePayer: this.myPK
-            }).add(instruction)
-        );
-
-        const signalAddedSignature = await this.connection.sendRawTransaction(signedTransaction.serialize());
-
-        await this.connection.confirmTransaction(signalAddedSignature);
-    }
-
-    currentAnswer(blockNumber: number): Promise<number> {
-        throw new Error("Method not implemented.");
-    }
-
-    getBlockNumber(): Promise<number> {
-        throw new Error("Method not implemented.");
+        return 1
     }
 
     public async getTradersCount(): Promise<number> {
-        let [tradersPK, _] = await solanaWeb3.PublicKey.findProgramAddress(
-            [ Buffer.from(this.tradersSeed)],
-            this.programId
-        );
-
-        const accountInfo = await this.connection.getAccountInfo(tradersPK, this.commitment)
-
-        return accountInfo.data.byteLength / 32 /* todo detect none-zero values? */
+        return (await this.listTradersAction()).length
     }
 
-    public async getTrader(index: number): Promise<string> {
-        let [traderPK, _] = await solanaWeb3.PublicKey.findProgramAddress(
-            [ Buffer.from(this.traderSeed)],
-            this.programId
-        );
-        const accountInfo = await this.connection.getAccountInfo(traderPK, this.commitment)
+    public async getTrader(index: number|null): Promise<TraderResponseInterface> {
+        let address = this.myPK.toString()
+        if (index !== null) {
+            address = (await this.listTradersAction())[index].toString()
+        }
 
-        return accountInfo.data.buffer[0] /* todo get email from bytes! */
+        const trader = (await this.getTraderAction(address))
+
+        return {
+            address: address,
+            email: trader.email,
+            signalsCount: Number(trader.signalsCount),
+            proofsCount: Number(trader.proofsCount),
+            creationBlockNumber: trader.creationBlockNumber,
+        }
     }
 
     public async getEmail(address: string): Promise<string> {
-        let [traderPK, _] = await solanaWeb3.PublicKey.findProgramAddress(
-            [ Buffer.from(this.traderSeed)],
-            new solanaWeb3.PublicKey(address)
-        );
-        const accountInfo = await this.connection.getAccountInfo(traderPK, this.commitment)
-
-        return accountInfo.data.buffer[0] /* todo get email from bytes! */
+        return (await this.getTraderAction(address)).email
     }
 
-    getPeriodProofs(address: string, index: number): Promise<PeriodProofResponseInterface> {
-        throw new Error("Method not implemented.");
+    public async getPeriodProofs(address: string, index: number): Promise<PeriodProofResponseInterface> {
+        const proof = (await this.getProofsFromPageAction(address, BigInt(Math.floor(index / 10)))).map(
+            (proof: Proof) => {
+                return {
+                    y: proof.pnl,
+                    newBalanceHash: (new BN(proof.newBalanceHash)).toString(),
+                    blockNumber: proof.blockNumber,
+                    proof: {
+                        pi_a: proof.pi_a.map(x => x.readUInt32LE(0).toString()),
+                        pi_b: proof.pi_b.map(x => x.map(y => y.readUInt32LE(0).toString())),
+                        pi_c: proof.pi_c.map(x => x.readUInt32LE(0).toString()),
+                    },
+                    prices: proof.prices.map(x => Number(x)),
+                }
+            }
+        )
+
+        return proof[index % 10] 
+    }
+
+    public async getPeriodProofsPage(address: string, page: number): Promise<PeriodProofResponseInterface[]> {
+        return (await this.getProofsFromPageAction(address, BigInt(page))).map(
+            (proof: Proof) => {
+                return {
+                    y: proof.pnl,
+                    newBalanceHash: (new BN(proof.newBalanceHash)).toString(),
+                    blockNumber: proof.blockNumber,
+                    proof: {
+                        pi_a: proof.pi_a.map(x => x.readUInt32LE(0).toString()),
+                        pi_b: proof.pi_b.map(x => x.map(y => y.readUInt32LE(0).toString())),
+                        pi_c: proof.pi_c.map(x => x.readUInt32LE(0).toString()),
+                    },
+                    prices: proof.prices.map(x => Number(x)),
+                }
+            }
+        )
+    }
+
+    public async getTimestampByBlockNumber(blockNumber: bigint): Promise<number> {
+        return this.getTimestampAction(blockNumber)
     }
 }

@@ -1,5 +1,3 @@
-import { VerificationProofEnum } from "src/app/core/enums/verification-proof.enum";
-
 export class ProofItem {
     public percentage: number
 
@@ -7,6 +5,8 @@ export class ProofItem {
         public id: number,
         public balance: number,
         public prevBalance: number,
+        public dateFrom: Date,
+        public dateTo: Date,
     ) {
         if (prevBalance === 0) {
             prevBalance = balance

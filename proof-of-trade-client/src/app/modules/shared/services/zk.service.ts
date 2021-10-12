@@ -1,12 +1,14 @@
 import { Inject, Injectable } from '@angular/core';
 import { asapScheduler, from, Observable, scheduled } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { StorageService } from 'src/app/modules/shared/services/storage.service';
 import { SmartContractInterface } from '../interfaces/smart-contract.interface';
 import { ProofModel } from '../models/proof.model';
 import { WitnessProveModel } from '../models/witness-prove';
 import { WitnessProveResult } from '../models/witness-prove-result';
 import { WitnessVerifyModel } from '../models/witness-verify';
 import { AssetsService } from './assets.service';
+import { PriceService } from './price.service';
 import { WalletService } from './wallet.service';
 import { WitnessService } from './witness.service';
 
@@ -17,9 +19,10 @@ export class ZkService {
 
   constructor(
     @Inject('SmartContractInterface') private contract: SmartContractInterface,
+    private priceService: PriceService,
     private walletService: WalletService,
     private witnessService: WitnessService,
-    private assetsService: AssetsService
+    private assetsService: AssetsService,
   ) { }
 
   public prove(proofModel: ProofModel): Observable<void> {
@@ -33,15 +36,13 @@ export class ZkService {
     const a = await this.contract.getSignal(address, len - 2)
     const b = await this.contract.getSignal(address, len - 1)
 
-    const currentBlock = await this.contract.getBlockNumber()
-
-    const price_a = await this.contract.currentAnswer(a.blockNumber) / Math.pow(10, 8)
-    const price_b = await this.contract.currentAnswer(b.blockNumber) / Math.pow(10, 8)
-    const price_now = await this.contract.currentAnswer(currentBlock) / Math.pow(10, 8)
+    const price_a = proofModel.proofs[0].price
+    const price_b = proofModel.proofs[1].price
+    const price_now = this.priceService.getBtcPrice()
 
     const proofLen = await this.contract.getProofLen(address)
 
-    let previousBalanceHash = '12991363837217894993991711342410433599666196004667524206273513024950584067662';
+    let previousBalanceHash = '12991363837217894993991711342410433599666196004667524206273513024950584067662'
     if (proofLen !== 0) {
         previousBalanceHash = await this.contract.getPrevBalanceHash(address, proofLen - 1)
     }
@@ -50,7 +51,7 @@ export class ZkService {
       [proofModel.proofs[0].action, proofModel.proofs[1].action],
       [proofModel.proofs[0].amount, proofModel.proofs[1].amount],
       [proofModel.proofs[0].nonce, proofModel.proofs[1].nonce],
-      [Math.round(proofModel.usdBalance), Math.round(proofModel.ethBalance)],
+      [Math.round(proofModel.usdBalance), Math.round(proofModel.btcBalance)],
       previousBalanceHash,
       [a.hash, b.hash],
       [Math.round(price_a), Math.round(price_b), Math.round(price_now)]
@@ -58,7 +59,7 @@ export class ZkService {
 
     const proof = await this.witnessService.prove(input)
     
-    await this.contract.addPeriodProof(proof, currentBlock)
+    await this.contract.addPeriodProof(proof)
   }
 
   public verify(address: string, proofId: number): Observable<boolean> {
@@ -89,9 +90,9 @@ export class ZkService {
     const a = await this.contract.getSignal(address, 2 * proofId)
     const b = await this.contract.getSignal(address, 2 * proofId + 1)
 
-    const price_a = Math.round((await this.contract.currentAnswer(a.blockNumber)) / Math.pow(10, 8))
-    const price_b = Math.round((await this.contract.currentAnswer(b.blockNumber)) / Math.pow(10, 8))
-    const price_now = Math.round((await this.contract.currentAnswer(periodProof.blockNumber)) / Math.pow(10, 8))
+    const price_a = Math.round(a.price)
+    const price_b = Math.round(b.price)
+    const price_now = Math.round(Math.floor(periodProof.prices[0] / 100000000))
     
     let previousBalanceHash = '12991363837217894993991711342410433599666196004667524206273513024950584067662'
     if (proofId !== 0) {

@@ -5,14 +5,14 @@ import { NgxSpinnerModule } from "ngx-spinner";
 import { VerifierRoutingModule } from './verifier-routing.module';
 import { VerifierComponent } from './verifier.component';
 import { SharedModule } from '../shared/shared.module';
-import { Contract } from 'src/app/api/ethereum/contract';
-import { MetaMaskProvider } from 'src/app/core/wallet-providers/meta-mask.provider';
 import { SubscriptionsComponent } from './components/subscriptions/subscriptions.component';
 import { SignalsComponent } from './components/signals/signals.component';
 import { TraderComponent } from './components/trader/trader.component';
 import { StrategyCardComponent } from './components/strategies/components/strategy-card/strategy-card.component';
 import { StrategiesComponent } from './components/strategies/strategies.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { Contract } from 'src/app/api/solana/contract';
+import { PhantomProvider } from 'src/app/core/wallet-providers/phantom.provider';
 
 
 @NgModule({
@@ -27,7 +27,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   imports: [
     CommonModule,
     VerifierRoutingModule,
-    SharedModule.withProviders(Contract, MetaMaskProvider),
+    SharedModule.withProviders(Contract, PhantomProvider),
     FontAwesomeModule,
     NgxSpinnerModule,
   ]

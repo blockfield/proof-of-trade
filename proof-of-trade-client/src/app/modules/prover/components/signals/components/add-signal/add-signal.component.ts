@@ -1,7 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { currencies, currenciesText, CurrencyEnum } from 'src/app/core/enums/currency.enum';
-import { actions, actionsText, SignalActionEnum } from 'src/app/core/enums/signal-action.enum';
+import { currenciesText } from 'src/app/core/enums/currency.enum';
+import { actionsText, SignalActionEnum } from 'src/app/core/enums/signal-action.enum';
 import { SignalStateEnum } from 'src/app/core/enums/signal-state.enum';
+import { BalanceModel } from 'src/app/modules/prover/models/balance.model';
 import { SignalModel } from '../../../../models/signal.model';
 import { SignalService } from '../../../../services/signal.service';
 import { TraderService } from '../../../../services/trader.service';
@@ -20,6 +21,7 @@ export class AddSignalComponent implements OnInit {
   public currenciesText = currenciesText
 
   public signal: SignalModel = new SignalModel()
+  public balance: BalanceModel
   public signalState: SignalStateEnum = SignalStateEnum.Undefined
   public addingStep: number = 0
 
@@ -29,6 +31,18 @@ export class AddSignalComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.initBalance()
+  }
+
+  private initBalance(): void {
+    this.traderService.getMyStorageBalance().subscribe(
+      (balance) => {
+        this.balance = balance
+      },
+      (error: any) => {
+        console.log('Error, can not get current balance', error)
+      }
+    )
   }
 
   public onReady(): void {
@@ -49,17 +63,30 @@ export class AddSignalComponent implements OnInit {
     const hash = this.signalService.hash(this.signal)
 
     this.traderService.addSignal(this.signal, hash).subscribe(
-      () => {
+      (newSignal: SignalModel) => {
         this.signalState = SignalStateEnum.Successed
-        this.signalAdded.emit(new SignalModel(
-          this.signal.currency,
-          this.signal.amount,
-          this.signal.nonce,
-          this.signal.action)
-        )
+
+        let usd = this.balance.usd
+        let btc = this.balance.btc
+
+        const usdDiff = Number(newSignal.amount) * Number(newSignal.price / 100000000)
+        const btcDiff = newSignal.amount
+
+        if (newSignal.action === SignalActionEnum.Buy) {
+          usd -= usdDiff
+          btc += btcDiff
+        } else if (newSignal.action === SignalActionEnum.Sell) {
+          usd += usdDiff
+          btc -= btcDiff
+        }
+
+        this.balance = new BalanceModel(usd, btc)
+
+        this.signalAdded.emit(newSignal)
         this.signal.clear()
       },
       (error: any) => {
+        console.log(error)
         this.signalState = SignalStateEnum.Failed
         this.signal.clear()
       }

@@ -50,11 +50,11 @@
     <div class="row my-3">
         <div class="col-8 my-auto">
             <span class="float-left">
-                Proof per month:
+                Trades per month:
             </span>
         </div>
         <div class="col-4 float-right my-auto">
-            {{strategy.avgProofCountPerMonth}}
+            {{strategy.avgProofCountPerMonth * 2 | number : '1.2-2'}}
         </div>
     </div>
     <div class="row my-3">

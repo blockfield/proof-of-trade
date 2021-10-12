@@ -37,11 +37,25 @@
                 </tbody>
             </table>
         </div>
+    </div>
+    <div class="row align-items-center m-1 w-100">
         <div class="col-md">
             <table class="table table-bordered m-1 w-100">
                 <tbody>
-                    <tr *ngFor="let proof of trader.proof">
-                        <td class="align-middle text-center" [ngClass]="{'table-success': proof.percentage > 0, 'table-danger': proof.percentage < 0}">Profit: {{proof.percentage | number : '1.2-2'}}%</td>
+                    <tr class="bg-dark">
+                        <td class="align-middle text-center text-light">№</td>
+                        <td class="align-middle text-center text-light">Proof period</td>
+                        <td class="align-middle text-center text-light">Profit</td>
+                        <td class="align-middle text-center text-light">Verify proof</td>
+                    </tr>
+                    <tr *ngFor="let proof of trader.proof; let i = index">
+                        <td class="align-middle text-center">{{i+1}}</td>
+                        <td class="align-middle text-center">
+                            {{proof.dateFrom | date: 'd MMMM y'}}
+                            <span class="mx-2">-</span>
+                            {{proof.dateTo | date: 'd MMMM y'}}
+                        </td>
+                        <td class="align-middle text-center" [ngClass]="{'table-success': proof.percentage > 0, 'table-danger': proof.percentage < 0}">{{proof.percentage | number : '1.2-2'}}%</td>
                         <td class="align-middle text-center">
                             <ng-container *ngIf="proof.state === 'success'">
                                 <span class="btn text-success">{{verificationStatesText[proof.state]}}</span>

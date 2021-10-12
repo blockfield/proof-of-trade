@@ -9,8 +9,6 @@ import { AddSignalComponent } from './components/signals/components/add-signal/a
 import { GenerateProofComponent } from './components/proof/components/generate-proof/generate-proof.component';
 import { FormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
-import { Contract } from 'src/app/api/ethereum/contract';
-import { MetaMaskProvider } from 'src/app/core/wallet-providers/meta-mask.provider';
 import { SignalsComponent } from './components/signals/signals.component';
 import { ProofComponent } from './components/proof/proof.component';
 import { FollowersComponent } from './components/followers/followers.component';
@@ -19,6 +17,8 @@ import { AmountComponent } from './components/signals/components/add-signal/comp
 import { NonceComponent } from './components/signals/components/add-signal/components/nonce/nonce.component';
 import { ActionComponent } from './components/signals/components/add-signal/components/action/action.component';
 import { FinalComponent } from './components/signals/components/add-signal/components/final/final.component';
+import { PhantomProvider } from 'src/app/core/wallet-providers/phantom.provider';
+import { Contract } from 'src/app/api/solana/contract';
 
 
 @NgModule({
@@ -40,7 +40,7 @@ import { FinalComponent } from './components/signals/components/add-signal/compo
     CommonModule,
     FormsModule,
     ProverRoutingModule,
-    SharedModule.withProviders(Contract, MetaMaskProvider),
+    SharedModule.withProviders(Contract, PhantomProvider),
     NgxSpinnerModule,
   ]
 })

@@ -8,9 +8,27 @@
         </div>
     </div>
 </div>
+<div *ngIf="balance" class="row">
+    <div class="col">
+        <div class="alert alert-warning" role="alert">
+            <div class="row">
+                <div class="col">USD:</div>
+                <div class="col">{{balance.usd}}$</div>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="alert alert-warning" role="alert">
+            <div class="row">
+                <div class="col">BTC:</div>
+                <div class="col">{{balance.btc}}</div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row">
     <div class="col">
-        <div class="alert alert-dark border border-dark shadow-lg rounded-lg">
+        <div class="alert alert-dark shadow-lg rounded-lg">
             <ng-container *ngIf="addingStep === 0">
                 <app-action [signal]="signal" (ready)="onReady()"></app-action>
             </ng-container>

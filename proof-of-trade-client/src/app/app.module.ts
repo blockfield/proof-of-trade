@@ -7,11 +7,11 @@ import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { MenuComponent } from './core/components/menu/menu.component';
 import { SharedModule } from './modules/shared/shared.module';
-import { Contract } from './api/ethereum/contract';
-import { MetaMaskProvider } from './core/wallet-providers/meta-mask.provider';
 import { HomeComponent } from './core/components/home/home.component';
 import { ConnectionComponent } from './core/components/connection/connection.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { Contract } from './api/solana/contract';
+import { PhantomProvider } from './core/wallet-providers/phantom.provider';
 
 @NgModule({
   declarations: [
@@ -24,7 +24,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     BrowserModule,
     AppRoutingModule,
     NgbModule,
-    SharedModule.withProviders(Contract, MetaMaskProvider),
+    SharedModule.withProviders(Contract, PhantomProvider),
     FontAwesomeModule,
     NgxSpinnerModule,
   ],

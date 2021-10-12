@@ -19,10 +19,13 @@
             <div class="col">
                 Currency
             </div>
+            <div class="col">
+                Price
+            </div>
         </div>
         <div *ngFor="let signal of signals; let i = index" class="row">
             <div class="col">
-                {{i}}
+                {{i+1}}
             </div>
             <div class="col">
                 {{actionsText[signal.action]}}
@@ -35,6 +38,9 @@
             </div>
             <div class="col">
                 {{currenciesText[signal.currency]}}
+            </div>
+            <div class="col">
+                {{signal.price / 100000000 | number : '1.1-8'}}$
             </div>
         </div>
     </div>

@@ -6,16 +6,18 @@ export class ProofItem {
 
     constructor(
         public id: number,
-        public balance: number,
-        public prevBalance: number,
+        public yieldNumber: number,
+        public prevYieldNumber: number,
+        public dateFrom: Date,
+        public dateTo: Date,
     ) {
         this.state = VerificationProofEnum.Unverified
 
-        if (prevBalance === 0) {
-            prevBalance = balance
+        if (prevYieldNumber === 0) {
+            prevYieldNumber = yieldNumber
         }
 
-        this.percentage = (balance / prevBalance - 1) * 100;
+        this.percentage = (yieldNumber / prevYieldNumber - 1) * 100;
     }
 
     public setState(isSucces: boolean): void {

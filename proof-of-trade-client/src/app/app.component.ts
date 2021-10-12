@@ -1,5 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import * as solanaWeb3 from '@solana/web3.js';
+import * as pyth from '@pythnetwork/client';
+
 import { ConnectedEvent } from './core/events/connected.event';
+import { PriceService } from './modules/shared/services/price.service';
 
 @Component({
   selector: 'app-root',
@@ -15,10 +19,13 @@ export class AppComponent implements OnInit {
   public provingKey: ArrayBuffer|null = null;
   public income: object;
 
-  constructor() {}
+  constructor(
+    private priceService: PriceService
+  ) {}
 
   ngOnInit(): void {
     this.initKeys()
+    this.initPyth()
   }
 
   private initKeys(): void {
@@ -40,6 +47,23 @@ export class AppComponent implements OnInit {
     }).then( (b: object) => {
         this.income = b;
     });
+  }
+
+  private initPyth(): void {
+    // todo Move to environment.ts
+    const SOLANA_CLUSTER_NAME = 'testnet';
+    const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl(SOLANA_CLUSTER_NAME));
+    const pythConnection = new pyth.PythConnection(connection, pyth.getPythProgramKeyForCluster(SOLANA_CLUSTER_NAME))
+    pythConnection.onPriceChange((product, price) => {
+      if (product.base !== 'BTC' || product.quote_currency !== 'USD') {
+        return
+      }
+
+      this.priceService.nextBtcPrice(price.price)
+    })
+
+    this.priceService.subscribeToBtcPrice()
+    pythConnection.start()
   }
 
   public onConnected(event: ConnectedEvent): void {

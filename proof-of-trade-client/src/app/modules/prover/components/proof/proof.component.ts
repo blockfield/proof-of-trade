@@ -26,4 +26,8 @@ export class ProofComponent implements OnInit {
     )
   }
 
+  public onProofAdded(): void {
+    this.initProof()
+  }
+
 }

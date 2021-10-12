@@ -1,17 +1,17 @@
 export enum CurrencyEnum {
-    ETH = "eth",
     BTC = "btc",
-    DGTX = "dgtx"
+    SOL = "sol",
+    ETH = "eth",
 }
 
 export let currencies: CurrencyEnum[] = [
-    CurrencyEnum.ETH,
     CurrencyEnum.BTC,
-    // CurrencyEnum.DGTX
+    CurrencyEnum.SOL,
+    CurrencyEnum.ETH,
 ]
 
 export let currenciesText = {
-    eth: "ETH",
     btc: "BTC",
-    dgtx: "DGTX"
+    sol: "SOL",
+    eth: "ETH",
 }

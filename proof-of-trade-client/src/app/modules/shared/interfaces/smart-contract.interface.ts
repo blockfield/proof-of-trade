@@ -5,19 +5,29 @@ export interface SmartContractInterface {
     getSignal(address: string, index: number): Promise<SignalResponseInterface>
     getProofLen(address: string): Promise<number>
     getPrevBalanceHash(address: string, index: number): Promise<string>
-    addPeriodProof(witnessProof: WitnessProofRequestInterface, currentBlock: number): Promise<void>
-    currentAnswer(blockNumber: number): Promise<number>
-    getBlockNumber(): Promise<number>
+    addPeriodProof(witnessProof: WitnessProofRequestInterface): Promise<void>
 
     getTradersCount(): Promise<number>
-    getTrader(index: number): Promise<string>
+    getTrader(index: number|null): Promise<TraderResponseInterface>
     getEmail(address: string): Promise<string>
     getPeriodProofs(address: string, index: number): Promise<PeriodProofResponseInterface>
+    getPeriodProofsPage(address: string, index: number): Promise<PeriodProofResponseInterface[]>
+
+    getTimestampByBlockNumber(blockNumber: bigint): Promise<number>
+}
+
+export interface TraderResponseInterface {
+    address: string,
+    email: string,
+    signalsCount: number,
+    proofsCount: number,
+    creationBlockNumber: bigint,
 }
 
 export interface SignalResponseInterface {
     blockNumber: number
     hash: string
+    price: number
 }
 
 export interface WitnessProofRequestInterface {
@@ -30,10 +40,11 @@ export interface WitnessProofRequestInterface {
 export interface PeriodProofResponseInterface {
     y: number,
     newBalanceHash: string,
-    blockNumber: number,
+    blockNumber: bigint,
     proof: {
         pi_a: string[],
         pi_b: string[][],
         pi_c: string[]
-    }
+    },
+    prices: number[]
 }

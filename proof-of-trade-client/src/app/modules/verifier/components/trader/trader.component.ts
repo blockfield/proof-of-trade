@@ -14,8 +14,8 @@ import { TraderModel } from '../../../shared/models/trader.model';
   styleUrls: ['./trader.component.less']
 })
 export class TraderComponent implements OnInit {
-  verificationStatesText = verificationProofText
-  faCopy = faCopy
+  public verificationStatesText = verificationProofText
+  public faCopy = faCopy
 
   public trader: TraderModel
 

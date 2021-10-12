@@ -3,9 +3,9 @@
         <ng-container *ngIf="signalState === 1; then addingTmpl; else addedTmpl"></ng-container>
     </div>
 </div>
-<div class="row align-items-center my-5">
+<div *ngIf="signalState !== 1" class="row align-items-center my-5">
     <div class="col">
-        <button class="btn btn-outline-dark" (click)="retry()">Retry?</button>
+        <button class="btn btn-outline-dark" (click)="retry()">One more?</button>
     </div>
 </div>
 

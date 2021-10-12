@@ -4,9 +4,11 @@
     </div>
 </div>
 <div class="row align-items-center my-5">
+    <div class="col"></div>
     <div *ngFor="let currency of currencies" class="col">
-        <button type="button" class="btn btn-lg btn-outline-dark" (click)="selectCurrency(currency)">
+        <button type="button" class="btn btn-lg btn-outline-dark" [disabled]="currency !== 'btc'" (click)="selectCurrency(currency)">
             {{currenciesText[currency]}}
         </button>
     </div>
+    <div class="col"></div>
 </div>
