@@ -1,4 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+
 import { VerificationProverEnum, verificationProverText } from 'src/app/core/enums/verification-trader.enum';
 import { ZkService } from 'src/app/modules/shared/services/zk.service';
 import { StrategyModel } from '../../../../models/strategy.model';
@@ -14,6 +16,7 @@ export class StrategyCardComponent implements OnInit {
   public verificationStatesText = verificationProverText
 
   constructor(
+    private toastr: ToastrService,
     private zkService: ZkService
   ) { }
 
@@ -29,7 +32,8 @@ export class StrategyCardComponent implements OnInit {
       },
       (error: any) => {
         this.strategy.setState(VerificationProverEnum.Failed)
-        console.log('verify period error: ', error)
+        this.toastr.error('Something went wrong')
+        console.log(error)
       }
     )
   }

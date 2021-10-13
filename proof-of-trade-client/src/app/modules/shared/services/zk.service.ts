@@ -59,7 +59,7 @@ export class ZkService {
 
     const proof = await this.witnessService.prove(input)
     
-    await this.contract.addPeriodProof(proof)
+    await this.contract.addPeriodProof(proof, [ price_now * 1000000000 ])
   }
 
   public verify(address: string, proofId: number): Observable<boolean> {

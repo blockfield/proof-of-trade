@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
 import { NgxSpinnerService } from "ngx-spinner";
+import { ToastrService } from 'ngx-toastr';
 
 import { verificationProofText } from 'src/app/core/enums/verification-proof.enum';
 import { TradersService } from 'src/app/modules/verifier/services/traders.service';
@@ -22,6 +23,7 @@ export class TraderComponent implements OnInit {
   constructor(
     private spinner: NgxSpinnerService,
     private route: ActivatedRoute,
+    private toastr: ToastrService,
     private tradersService: TradersService,
     private zkService: ZkService,
   ) { }
@@ -60,6 +62,7 @@ export class TraderComponent implements OnInit {
       },
       (error: any) => {
         proof.setState(false)
+        this.toastr.error('Something went wrong')
         console.log('verify period error: ', error)
       }
     )

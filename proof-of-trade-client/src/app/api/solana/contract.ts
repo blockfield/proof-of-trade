@@ -51,7 +51,7 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
         return proof.newBalanceHash
     }
 
-    public async addPeriodProof(witnessProof: WitnessProofRequestInterface): Promise<void> {
+    public async addPeriodProof(witnessProof: WitnessProofRequestInterface, prices: number[]): Promise<void> {
         await this.addProofAction({
             pi_a: [(new BN(witnessProof.pi_a[0])).toBuffer(), (new BN(witnessProof.pi_a[1])).toBuffer()],
             pi_b: [
@@ -62,20 +62,8 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
             pnl: Number(witnessProof.publicSignals[1]),
             blockNumber: BigInt(0),
             newBalanceHash: (new BN(witnessProof.publicSignals[0])).toBuffer(),
-            prices: []
+            prices: prices.map(x => BigInt(x))
         })
-    }
-
-    public async currentAnswer(blockNumber: number): Promise<number> {
-        console.log('currentAnswer', 'i do not know that is here')
-
-        return 150
-    }
-
-    public async getBlockNumber(): Promise<number> {
-        console.log('getBlockNumber', 'i do not know that is here')
-
-        return 1
     }
 
     public async getTradersCount(): Promise<number> {

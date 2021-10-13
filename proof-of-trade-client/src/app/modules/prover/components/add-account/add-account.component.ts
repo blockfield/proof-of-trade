@@ -1,4 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+
 import { AccountModel } from '../../models/account.model';
 import { TraderService } from '../../services/trader.service';
 
@@ -14,6 +16,7 @@ export class AddAccountComponent implements OnInit {
   public isAdding = false
 
   constructor(
+    private toastr: ToastrService,
     private traderService: TraderService,
   ) { }
 
@@ -22,7 +25,7 @@ export class AddAccountComponent implements OnInit {
 
   public addEmail(): void {
     if (!this.account.email) {
-      console.log('empty signal data')
+      this.toastr.error('Empty trader name')
       return
     }
 
@@ -34,7 +37,8 @@ export class AddAccountComponent implements OnInit {
         this.isAdding = false
       },
       (error: any) => {
-        console.log('error on addTrader: ', error)
+        this.toastr.error('Something went wrong')
+        console.log(error)
         this.isAdding = false
       }
     )
