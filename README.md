@@ -20,12 +20,14 @@ Trader path:
 3. They make such signals during a month (or any other period) and can create trading performance proof at the end of period. They insert all signals preimage data (ticker, amount, trade direction and nonce - private inputs of SNARK). Local frontend downloads signals' hashes and actives' prices on associated timestamps from blockchain (public inputs of SNARK). After that, the frontend calculates zero knowledge proof of period trade performance with performance percent (output of SNARK). Proof and percent are stored on blockchain too.
 
 User can:
-- view list of traders and their performance percents
-- verify all percents by checking zk-proof locally on their browser
-- chouse trader with the desired ratio of profits and risks
-- contact with traders in order to buy their service
+1. view list of traders and their performance percents
+2. verify all percents by checking zk-proof locally on their browser
+3. chouse trader with the desired ratio of profits and risks
+4. contact with traders in order to buy their service
 
-External observers don't understand which signals a trader has made - it is private. All signals’ data are stored on a chain and reliable cryptography is used for performance proving - it is trustless.
+External observers don't understand which signals a trader has made - it is private. 
+
+One more important thing: all market data needed for performance calculation is taken from Pyth (on-chain price oracle). So all signals’ data are stored on a chain and reliable cryptography is used for performance proving - it is trustless.
 
 ## Technical details
 [Solana](https://solana.com/) smart contracts are used as backend. All functionality and data are stored in the Solana blockchain.
