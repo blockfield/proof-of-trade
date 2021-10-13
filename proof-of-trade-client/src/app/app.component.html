@@ -1,0 +1,32 @@
+<div class="d-flex flex-column w-100 h-100 bg-light">
+  <div>
+      <app-menu (connectedEvent)="onConnected($event)"></app-menu>
+  </div>
+  <ng-container *ngIf="connectedEvent !== undefined; then loadedTmpl; else notConnectedTmpl"></ng-container>
+</div>
+
+<ng-template #loadedTmpl>
+  <ng-container *ngIf="connectedEvent.address; then connectedTmpl; else errorConnectedTmpl"></ng-container>
+</ng-template>
+
+<ng-template #connectedTmpl>
+  <div class="flex-grow-1">
+    <router-outlet></router-outlet>
+  </div>
+</ng-template>
+
+<ng-template #errorConnectedTmpl>
+  <div class="row m-3 p-3">
+    <div class="col">
+      <h2 class="text-center">Error is occured while connecting to Phantom</h2>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #notConnectedTmpl>
+  <div class="row m-3 p-3">
+    <div class="col">
+      <app-connection></app-connection>
+    </div>
+  </div>
+</ng-template>

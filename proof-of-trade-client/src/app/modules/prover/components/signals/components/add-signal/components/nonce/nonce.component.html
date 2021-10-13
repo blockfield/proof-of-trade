@@ -1,0 +1,17 @@
+<div class="row my-5">
+    <div class="col">
+        <h3>Enter nonce:</h3>
+    </div>
+</div>
+<div class="row align-items-center my-5">
+    <div class="col">
+        <form (ngSubmit)="enterNonce()">
+            <div class="input-group input-group-lg">
+                <input required type="number" class="form-control text-center" id="nonce" name="nonce" min="-128" max="127" [(ngModel)]="signal.nonce">
+                <div class="input-group-append">
+                  <button class="btn btn-dark" type="submit" [disabled]="!signal.nonce || signal.nonce < -128 || signal.nonce > 127">Add</button>
+                </div>
+              </div>
+        </form>
+    </div>
+</div>
