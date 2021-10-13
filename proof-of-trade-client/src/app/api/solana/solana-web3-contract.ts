@@ -305,16 +305,17 @@ export class SolanaWeb3Contract {
           | - [4] (uint32) pnl                    |
           | - [8] (uint) block_number             |
           | - [32] (byte array) new_balance_hash  |
+          | - [8 * 10] [array of 10 uints] prices |
           |---------------------------------------+
-       +->| Total size: 301 bytes                 |
+       +->| Total size: 381 bytes                 |
        |  +---------------------------------------+
        |
        |       AddProofInstruction
        |       +-------------------------+
        |       | - [1] (byte) method_id  |
-       +-------| - [301] (proof) proof   |
+       +-------| - [381] (proof) proof   |
                |-------------------------|
-               | Total size: 302 bytes   |
+               | Total size: 382 bytes   |
                +-------------------------+
     */
     public async addProofAction(proof: Proof): Promise<void> {
@@ -322,7 +323,7 @@ export class SolanaWeb3Contract {
         const traderAccount = await this.getTraderAction(this.myPK.toString())
         const proofsPageAddress = await this.getProofPda(this.myPK, traderAccount.proofsCount / BigInt(10))
     
-        let proofData = Buffer.alloc(381)
+        let proofData = Buffer.alloc(382)
     
         Buffer.from([1]).copy(proofData)
     
@@ -342,6 +343,11 @@ export class SolanaWeb3Contract {
         proofData.writeBigUInt64BE(BigInt(proof.blockNumber), 261)
     
         proof.newBalanceHash.copy(proofData, 269)
+
+        for (let i = 0; i < 10; i++) {
+            let price = i < proof.prices.length ? proof.prices[i] : BigInt(0)
+            proofData.writeBigUInt64BE(price, 301 + i * 8)
+        }
     
         let bInstructionData = Buffer.alloc(382)
         let bMethodId = Buffer.from([2])

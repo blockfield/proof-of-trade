@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+
 import { currenciesText } from 'src/app/core/enums/currency.enum';
 import { actionsText } from 'src/app/core/enums/signal-action.enum';
 import { SignalModel } from '../../models/signal.model';
@@ -16,6 +18,7 @@ export class SignalsComponent implements OnInit {
   public signals: SignalModel[]
 
   constructor(
+    private toastr: ToastrService,
     private traderService: TraderService,
   ) { }
 
@@ -30,7 +33,8 @@ export class SignalsComponent implements OnInit {
         this.signals = signals
       },
       (error: any) => {
-        console.log('signals are failed', error)
+        this.toastr.error('Something went wrong')
+        console.log(error)
       }
     )
   }

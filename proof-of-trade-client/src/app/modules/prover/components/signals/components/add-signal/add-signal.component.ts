@@ -1,4 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
+
 import { currenciesText } from 'src/app/core/enums/currency.enum';
 import { actionsText, SignalActionEnum } from 'src/app/core/enums/signal-action.enum';
 import { SignalStateEnum } from 'src/app/core/enums/signal-state.enum';
@@ -26,6 +28,7 @@ export class AddSignalComponent implements OnInit {
   public addingStep: number = 0
 
   constructor(
+    private toastr: ToastrService,
     private traderService: TraderService,
     private signalService: SignalService,
   ) { }
@@ -40,7 +43,8 @@ export class AddSignalComponent implements OnInit {
         this.balance = balance
       },
       (error: any) => {
-        console.log('Error, can not get current balance', error)
+        this.toastr.error('Something went wrong')
+        console.log(error)
       }
     )
   }
@@ -56,7 +60,7 @@ export class AddSignalComponent implements OnInit {
 
   public sendSignal(): void {
     if (!this.signal.currency || !this.signal.amount || !this.signal.nonce) {
-      console.log('empty signal data')
+      this.toastr.error('Signal\'s data is empty')
       return
     }
 
@@ -86,6 +90,7 @@ export class AddSignalComponent implements OnInit {
         this.signal.clear()
       },
       (error: any) => {
+        this.toastr.error('Signal failed')
         console.log(error)
         this.signalState = SignalStateEnum.Failed
         this.signal.clear()
