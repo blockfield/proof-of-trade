@@ -1,7 +1,7 @@
 use solana_program::{program_error::ProgramError, program_pack::Pack};
 use std::convert::TryInto;
 
-use arrayref::{array_mut_ref, mut_array_refs};
+use arrayref::{array_mut_ref, array_ref, array_refs, mut_array_refs};
 
 use crate::error::POTErrors::InvalidInstruction;
 use crate::state::{Proof, Signal};
@@ -30,7 +30,7 @@ pub enum POTInstruction {
     /// 2. `[writable]` Signals page account
     /// 3. `[] System program`
     /// 4. `[] Rent sysvar`
-    AddSignal { signal: Signal },
+    AddSignal { signal: Box<Signal> },
 
     /// Add new proof
     ///
@@ -42,7 +42,17 @@ pub enum POTInstruction {
     /// 2. `[writable]` Proofs page account
     /// 3. `[] System program`
     /// 4. `[] Rent sysvar`
-    AddProof { proof: Proof },
+    AddProof { proof: Box<Proof> },
+
+    ChangeBlockNumberForDemo {
+        element_number: u32,
+        new_block_number: u64,
+    },
+
+    ChangePricesForDemo {
+        element_number: u32,
+        new_prices: [u64; 10],
+    },
 }
 
 impl POTInstruction {
@@ -56,11 +66,44 @@ impl POTInstruction {
             }
             1 => {
                 let signal = Signal::unpack(rest)?;
-                Self::AddSignal { signal }
+                Self::AddSignal {
+                    signal: Box::new(signal),
+                }
             }
             2 => {
                 let proof = Proof::unpack(rest)?;
-                Self::AddProof { proof }
+                Self::AddProof {
+                    proof: Box::new(proof),
+                }
+            }
+            254 => {
+                let src = array_ref![rest, 0, 4 + 8];
+                let (element_number, new_block_number) = array_refs![src, 4, 8];
+
+                let element_number = u32::from_be_bytes(*element_number);
+                let new_block_number = u64::from_be_bytes(*new_block_number);
+
+                Self::ChangeBlockNumberForDemo {
+                    element_number,
+                    new_block_number,
+                }
+            }
+            255 => {
+                let src = array_ref![rest, 0, 4 + 8 * 10];
+                let (element_number, new_prices) = array_refs![src, 4, 8 * 10];
+
+                let element_number = u32::from_be_bytes(*element_number);
+
+                let new_prices: [u64; 10] = (0..10)
+                    .map(|i| u64::from_be_bytes(*array_ref![new_prices, i * 8, 8]))
+                    .collect::<Vec<u64>>()
+                    .try_into()
+                    .map_err(|_| ProgramError::InvalidAccountData)?;
+
+                Self::ChangePricesForDemo {
+                    element_number,
+                    new_prices,
+                }
             }
             _ => return Err(InvalidInstruction.into()),
         })
@@ -86,6 +129,7 @@ impl POTInstruction {
                 method_dst[0] = 2;
                 proof.pack_into_slice(proof_dst);
             }
+            _ => {}
         }
     }
 }

@@ -1,7 +1,6 @@
-use solana_program::{
-    system_program,
-    sysvar,
-};
+use std::str::FromStr;
+
+use solana_program::{system_program, sysvar};
 use solana_program_test::*;
 use solana_sdk::{
     account::ReadableAccount,
@@ -13,7 +12,10 @@ use solana_sdk::{
     transaction::Transaction,
 };
 
-use solana_proof_of_trade::{instruction::POTInstruction, state::{PROOFS_PAGE_SIZE, Proof, ProofsPage, SIGNALS_PAGE_SIZE, Signal, SignalsPage, Trader}};
+use solana_proof_of_trade::{
+    instruction::POTInstruction,
+    state::{Proof, ProofsPage, Signal, SignalsPage, Trader, PROOFS_PAGE_SIZE, SIGNALS_PAGE_SIZE},
+};
 
 fn traders_list_pda(program_id: Pubkey) -> Pubkey {
     Pubkey::find_program_address(&[b"traders_list"], &program_id).0
@@ -82,6 +84,7 @@ async fn create_trader(
                 AccountMeta::new(traders_list_address, false),
                 AccountMeta::new_readonly(system_program::ID, false),
                 AccountMeta::new_readonly(sysvar::rent::ID, false),
+                AccountMeta::new_readonly(sysvar::clock::ID, false),
             ],
         )],
         Some(&payer.pubkey()),
@@ -97,7 +100,7 @@ async fn create_trader(
 
     assert_eq!(
         traders_list_account.data()[8..40],
-        trader_address.to_bytes()
+        payer.pubkey().to_bytes()
     );
 
     let trader_account = banks_client
@@ -144,10 +147,13 @@ async fn add_signals(
             is_initialized: true,
             hash: [i + 1; 32],
             block_number: 5,
+            prices: [0; 10],
         };
 
         let add_signal_instruction =
-            solana_proof_of_trade::instruction::POTInstruction::AddSignal { signal };
+            solana_proof_of_trade::instruction::POTInstruction::AddSignal {
+                signal: Box::new(signal),
+            };
         let mut add_signal_data = [0; 1 + Signal::LEN];
         add_signal_instruction.pack(&mut add_signal_data);
 
@@ -161,6 +167,11 @@ async fn add_signals(
                     AccountMeta::new(page_address, false),
                     AccountMeta::new_readonly(system_program::ID, false),
                     AccountMeta::new_readonly(sysvar::rent::ID, false),
+                    AccountMeta::new_readonly(sysvar::clock::ID, false),
+                    AccountMeta::new_readonly(
+                        Pubkey::from_str("Dbe2URcArR1i9sS1QMFCjTGyM4ZLWPMBejBrA7cftC3D").unwrap(),
+                        false,
+                    ),
                 ],
             )],
             Some(&payer.pubkey()),
@@ -253,10 +264,12 @@ async fn add_proofs(
             pnl: 123,
             block_number: i,
             new_balance_hash: [9u8; 32],
+            prices: [0; 10],
         };
 
-        let add_proof_instruction =
-            solana_proof_of_trade::instruction::POTInstruction::AddProof { proof };
+        let add_proof_instruction = solana_proof_of_trade::instruction::POTInstruction::AddProof {
+            proof: Box::new(proof),
+        };
         let mut add_proof_data = [0; 1 + Proof::LEN];
         add_proof_instruction.pack(&mut add_proof_data);
 
@@ -270,6 +283,7 @@ async fn add_proofs(
                     AccountMeta::new(page_address, false),
                     AccountMeta::new_readonly(system_program::ID, false),
                     AccountMeta::new_readonly(sysvar::rent::ID, false),
+                    AccountMeta::new_readonly(sysvar::clock::ID, false),
                 ],
             )],
             Some(&payer.pubkey()),
