@@ -1,0 +1,42 @@
+<div class="row">
+    <div class="col">
+        <div class="alert alert-info" role="alert">
+            <h4 class="alert-heading my-3">Generate proof form</h4>
+            <p>To generate proof you need enter initial balances and click button below</p>
+            <hr>
+            <p class="mb-0">Every 2 signals are used for one proof </p>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="alert alert-dark shadow-lg rounded-lg">
+            <div class="row my-5">
+                <div class="col">
+                    <h3>Initial balances:</h3>
+                </div>
+            </div>
+            <div class="row align-items-center my-5">
+                <div class="col-md input-group">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text col-form-label" for="usd">USD</label>
+                    </div>
+                    <input required type="number" class="form-control" id="usd" name="usd" [(ngModel)]="model.usdBalance">
+                </div>
+                <div class="col-md input-group">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text col-form-label" for="btc">BTC</label>
+                    </div>
+                    <input required type="number" class="form-control" id="btc" name="btc" [(ngModel)]="model.btcBalance">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col text-center">
+                    <button type="submit" class="btn btn-success" (click)="generateProof()">
+                        <span class="p-3">Generate Proof</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

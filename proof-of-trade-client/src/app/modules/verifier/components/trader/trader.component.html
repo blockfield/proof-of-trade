@@ -1,0 +1,73 @@
+<div class="row w-100 h-100">
+    <div class="col">
+        <ng-container *ngIf="trader; then loadedTmpl; else loadingTmpl"></ng-container>
+    </div>
+</div>
+
+<ng-template #loadingTmpl>
+    <ngx-spinner [bdColor]="'#eeeeee'" [color]="'#000000'"></ngx-spinner>
+</ng-template>
+
+<ng-template #loadedTmpl>
+    <div class="row align-items-center m-3">
+        <div class="col-md">
+            <table class="table table-bordered m-1 w-100">
+                <tbody>
+                    <tr>
+                        <th class="align-middle text-center" scope="row">Address:</th>
+                        <td class="align-middle text-center">
+                            <div class="row align-items-center">
+                                <div class="col-7">
+                                    <span class="copy float-right">{{trader.address | slice: 0 : 6}}.....{{trader.address | slice: -4}}</span>
+                                </div>
+                                <div class="col-5">
+                                    <fa-icon class="copy float-left" [icon]="faCopy" size="2x"></fa-icon>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="align-middle text-center" scope="row">Username:</th>
+                        <td class="align-middle text-center">{{trader.email}}</td>
+                    </tr>
+                    <tr>
+                        <th class="align-middle text-center" scope="row">Created:</th>
+                        <td class="align-middle text-center">{{trader.date | date: 'd MMMM y'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row align-items-center m-1 w-100">
+        <div class="col-md">
+            <table class="table table-bordered m-1 w-100">
+                <tbody>
+                    <tr class="bg-dark">
+                        <td class="align-middle text-center text-light">№</td>
+                        <td class="align-middle text-center text-light">Proof period</td>
+                        <td class="align-middle text-center text-light">Profit</td>
+                        <td class="align-middle text-center text-light">Verify proof</td>
+                    </tr>
+                    <tr *ngFor="let proof of trader.proof; let i = index">
+                        <td class="align-middle text-center">{{i+1}}</td>
+                        <td class="align-middle text-center">
+                            {{proof.dateFrom | date: 'd MMMM y'}}
+                            <span class="mx-2">-</span>
+                            {{proof.dateTo | date: 'd MMMM y'}}
+                        </td>
+                        <td class="align-middle text-center" [ngClass]="{'table-success': proof.percentage > 0, 'table-danger': proof.percentage < 0}">{{proof.percentage | number : '1.2-2'}}%</td>
+                        <td class="align-middle text-center">
+                            <ng-container *ngIf="proof.state === 'success'">
+                                <span class="btn text-success">{{verificationStatesText[proof.state]}}</span>
+                            </ng-container>
+                            <ng-container *ngIf="proof.state === 'failed'">
+                                <span class="btn text-danger">{{verificationStatesText[proof.state]}}</span>
+                            </ng-container>
+                            <span *ngIf="proof.state === 'unverified'" class="btn btn-link" (click)="verifyProof(proof.id)">Verify</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</ng-template>
