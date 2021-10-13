@@ -38,7 +38,7 @@ export class TraderService {
 
   public getMyStorageBalance(): Observable<BalanceModel> {
     return this.getStorageBalances().pipe(
-      map((balances) => balances[this.walletService.getAddress()] || new BalanceModel(1000, 0))
+      map((balances) => balances[this.walletService.getAddress()] || new BalanceModel(100000, 0))
     )
   }
 
@@ -55,7 +55,7 @@ export class TraderService {
     }
 
     let proof: ProofItem[] = []
-    let prevProofBalance = 1000
+    let prevProofBalance = 100000
     let prevTimestamp = await this.contract.getTimestampByBlockNumber(trader.creationBlockNumber)
     for (let i = 0; i < periodProofList.length; i++) {
       const periodProof = periodProofList[i]
@@ -118,7 +118,7 @@ export class TraderService {
           let usd = balance.usd
           let btc = balance.btc
 
-          const usdDiff = Number(data.newSignal.amount) * Number(data.newSignal.price / 100000000)
+          const usdDiff = Number(data.newSignal.amount) * Number(data.newSignal.price / 1000000000)
           const btcDiff = data.newSignal.amount
 
           if (data.newSignal.action === SignalActionEnum.Buy) {

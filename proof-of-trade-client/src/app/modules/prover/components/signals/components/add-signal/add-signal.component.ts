@@ -69,7 +69,7 @@ export class AddSignalComponent implements OnInit {
         let usd = this.balance.usd
         let btc = this.balance.btc
 
-        const usdDiff = Number(newSignal.amount) * Number(newSignal.price / 100000000)
+        const usdDiff = Number(newSignal.amount) * Number(newSignal.price / 1000000000)
         const btcDiff = newSignal.amount
 
         if (newSignal.action === SignalActionEnum.Buy) {

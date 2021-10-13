@@ -34,7 +34,7 @@ export interface WitnessProofRequestInterface {
     pi_a: string[]
     pi_b: string[][]
     pi_c: string[]
-    publicSignals: number[]
+    publicSignals: string[]
 }
 
 export interface PeriodProofResponseInterface {

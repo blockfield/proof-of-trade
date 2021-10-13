@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
 
   private initPyth(): void {
     // todo Move to environment.ts
-    const SOLANA_CLUSTER_NAME = 'testnet';
+    const SOLANA_CLUSTER_NAME = 'devnet';
     const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl(SOLANA_CLUSTER_NAME));
     const pythConnection = new pyth.PythConnection(connection, pyth.getPythProgramKeyForCluster(SOLANA_CLUSTER_NAME))
     pythConnection.onPriceChange((product, price) => {

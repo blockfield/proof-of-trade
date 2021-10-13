@@ -2,8 +2,8 @@ import * as solanaWeb3 from '@solana/web3.js';
 
 export class SolanaWeb3Contract {
     private programId = new solanaWeb3.PublicKey('4BqkfCxr3kknEvF2GQhXLujDyj8uY5FDh8MNTvuJZp3s')
-    private btcPricePK = new solanaWeb3.PublicKey('DJW6f4ZVqCnpYNN9rNuzqUcCvkVtBgixo8mq9FKSsCbJ')
-    private rpcEndpoint = 'https://api.testnet.solana.com'
+    private btcPricePK = new solanaWeb3.PublicKey('HovQMDrbAgAYPCmHVSrezcSmkMtXSSUsLDFANExrZh2J')
+    private rpcEndpoint = 'https://api.devnet.solana.com'
     private commitment: solanaWeb3.Commitment = 'confirmed'
 
     private connection: solanaWeb3.Connection
@@ -329,7 +329,7 @@ export class SolanaWeb3Contract {
         proof.pi_a[0].copy(proofData, 1)
         proof.pi_a[1].copy(proofData, 33)
     
-        proof.pi_b[0][1].copy(proofData, 65)
+        proof.pi_b[0][0].copy(proofData, 65)
         proof.pi_b[0][1].copy(proofData, 97)
         proof.pi_b[1][0].copy(proofData, 129)
         proof.pi_b[1][1].copy(proofData, 161)

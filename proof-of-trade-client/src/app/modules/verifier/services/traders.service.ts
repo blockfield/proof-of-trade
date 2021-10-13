@@ -28,7 +28,7 @@ export class TradersService {
     }
 
     let proof: ProofItem[] = []
-    let prevProofBalance = 1000
+    let prevProofBalance = 100000
     let prevTimestamp = await this.contract.getTimestampByBlockNumber(trader.creationBlockNumber)
     const createdDate = new Date(prevTimestamp)
     for (let i = 0; i < periodProofList.length; i++) {
@@ -61,7 +61,7 @@ export class TradersService {
       const traderModel = await this.getTraderModel(i)
 
       const createdDate = traderModel.date
-      const initBalance = 1000
+      const initBalance = 100000
 
       let profitSum = 0
       let proofCount = 0

@@ -36,13 +36,13 @@ export class ZkService {
     const a = await this.contract.getSignal(address, len - 2)
     const b = await this.contract.getSignal(address, len - 1)
 
-    const price_a = proofModel.proofs[0].price
-    const price_b = proofModel.proofs[1].price
+    const price_a = proofModel.proofs[0].price / 1000000000
+    const price_b = proofModel.proofs[1].price / 1000000000
     const price_now = this.priceService.getBtcPrice()
 
     const proofLen = await this.contract.getProofLen(address)
 
-    let previousBalanceHash = '12991363837217894993991711342410433599666196004667524206273513024950584067662'
+    let previousBalanceHash = '16865888626473709837690039826672233841362137295365548295255658602462103516806'
     if (proofLen !== 0) {
         previousBalanceHash = await this.contract.getPrevBalanceHash(address, proofLen - 1)
     }
@@ -90,11 +90,11 @@ export class ZkService {
     const a = await this.contract.getSignal(address, 2 * proofId)
     const b = await this.contract.getSignal(address, 2 * proofId + 1)
 
-    const price_a = Math.round(a.price)
-    const price_b = Math.round(b.price)
-    const price_now = Math.round(Math.floor(periodProof.prices[0] / 100000000))
+    const price_a = Math.round(a.price / 1000000000)
+    const price_b = Math.round(b.price/ 1000000000)
+    const price_now = Math.round(periodProof.prices[0] / 1000000000)
     
-    let previousBalanceHash = '12991363837217894993991711342410433599666196004667524206273513024950584067662'
+    let previousBalanceHash = '16865888626473709837690039826672233841362137295365548295255658602462103516806'
     if (proofId !== 0) {
         previousBalanceHash = (await this.contract.getPeriodProofs(address, proofId - 1)).newBalanceHash;
     }

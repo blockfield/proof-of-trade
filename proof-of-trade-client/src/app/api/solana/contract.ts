@@ -52,14 +52,14 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
     }
 
     public async addPeriodProof(witnessProof: WitnessProofRequestInterface): Promise<void> {
-         await this.addProofAction({
-            pi_a: [Buffer.from(witnessProof.pi_a[0]), Buffer.from(witnessProof.pi_a[1])],
+        await this.addProofAction({
+            pi_a: [(new BN(witnessProof.pi_a[0])).toBuffer(), (new BN(witnessProof.pi_a[1])).toBuffer()],
             pi_b: [
-                [Buffer.from(witnessProof.pi_b[0][0]), Buffer.from(witnessProof.pi_b[0][1])],
-                [Buffer.from(witnessProof.pi_b[1][0]), Buffer.from(witnessProof.pi_b[1][1])]
+                [(new BN(witnessProof.pi_b[0][0])).toBuffer(), (new BN(witnessProof.pi_b[0][1])).toBuffer()],
+                [(new BN(witnessProof.pi_b[1][0])).toBuffer(), (new BN(witnessProof.pi_b[1][1])).toBuffer()]
             ],
-            pi_c: [Buffer.from(witnessProof.pi_a[0]), Buffer.from(witnessProof.pi_a[1])],
-            pnl: witnessProof.publicSignals[1],
+            pi_c: [(new BN(witnessProof.pi_c[0])).toBuffer(), (new BN(witnessProof.pi_c[1])).toBuffer()],
+            pnl: Number(witnessProof.publicSignals[1]),
             blockNumber: BigInt(0),
             newBalanceHash: (new BN(witnessProof.publicSignals[0])).toBuffer(),
             prices: []
@@ -111,9 +111,9 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
                     newBalanceHash: (new BN(proof.newBalanceHash)).toString(),
                     blockNumber: proof.blockNumber,
                     proof: {
-                        pi_a: proof.pi_a.map(x => x.readUInt32LE(0).toString()),
-                        pi_b: proof.pi_b.map(x => x.map(y => y.readUInt32LE(0).toString())),
-                        pi_c: proof.pi_c.map(x => x.readUInt32LE(0).toString()),
+                        pi_a: proof.pi_a.map(x => (new BN(x)).toString()),
+                        pi_b: proof.pi_b.map(x => x.map(y => (new BN(y)).toString())),
+                        pi_c: proof.pi_c.map(x => (new BN(x)).toString()),
                     },
                     prices: proof.prices.map(x => Number(x)),
                 }
@@ -131,9 +131,9 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
                     newBalanceHash: (new BN(proof.newBalanceHash)).toString(),
                     blockNumber: proof.blockNumber,
                     proof: {
-                        pi_a: proof.pi_a.map(x => x.readUInt32LE(0).toString()),
-                        pi_b: proof.pi_b.map(x => x.map(y => y.readUInt32LE(0).toString())),
-                        pi_c: proof.pi_c.map(x => x.readUInt32LE(0).toString()),
+                        pi_a: proof.pi_a.map(x => (new BN(x)).toString()),
+                        pi_b: proof.pi_b.map(x => x.map(y => (new BN(y)).toString())),
+                        pi_c: proof.pi_c.map(x => (new BN(x)).toString()),
                     },
                     prices: proof.prices.map(x => Number(x)),
                 }
