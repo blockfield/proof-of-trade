@@ -15,7 +15,8 @@
             <ng-container *ngIf="stateModel.state === 'trader'; then traderMenuTmpl"></ng-container>
         </div>
         <div class="col m-0 p-0">
-            <button class="btn btn-lg btn-info float-right m-2"
+            <button class="btn btn-lg float-right m-2"
+                style="background-color: '#4e45ba'; color: white;"
                 (click)="connectToProvider()"
                 [disabled]="connectionModel.isDisconnectable()">
                 {{connectionModel.isConnectable() ? 'Connect' : 'Connected' }}
