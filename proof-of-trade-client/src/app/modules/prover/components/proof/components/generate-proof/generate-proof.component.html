@@ -17,7 +17,7 @@
             </div>
             <div class="row m-2">
                 <div class="col text-center">
-                    <button type="submit" class="btn btn-success" (click)="generateProof()" [disabled]="!canGenerate || isGenerating">
+                    <button type="submit" class="btn btn-lg btn-success" (click)="generateProof()" [disabled]="!canGenerate || isGenerating">
                         <span class="p-3">{{isGenerating ? 'Generating...' : 'Generate Proof'}}</span>
                     </button>
                 </div>
