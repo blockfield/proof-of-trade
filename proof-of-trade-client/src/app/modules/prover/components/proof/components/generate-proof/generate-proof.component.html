@@ -9,12 +9,21 @@
 </div>
 <div class="row">
     <div class="col">
-        <div class="alert alert-dark shadow-lg rounded-lg">
+        <div class="alert alert-warning" role="alert">
             <div *ngIf="unprovedSignalsCount !== undefined" class="row m-2">
-                <div class="col text-center">
-                    <span>Unproved signals: {{unprovedSignalsCount}}</span>
+                <div class="col-10 text-center">
+                    <span>Unproved signals:</span>
+                </div>
+                <div class="col-2 text-center">
+                    <span>{{unprovedSignalsCount}}</span>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="alert alert-dark shadow-lg rounded-lg">
             <div class="row m-2">
                 <div class="col text-center">
                     <button type="submit" class="btn btn-lg btn-success" (click)="generateProof()" [disabled]="!canGenerate || isGenerating">
