@@ -1,11 +1,9 @@
 import { Inject, Injectable } from '@angular/core';
-import { asapScheduler, from, Observable, scheduled } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { StorageService } from 'src/app/modules/shared/services/storage.service';
+import { from, Observable } from 'rxjs';
+import MathHelper from 'src/app/core/helpers/math.helper';
 import { SmartContractInterface } from '../interfaces/smart-contract.interface';
 import { ProofModel } from '../models/proof.model';
 import { WitnessProveModel } from '../models/witness-prove';
-import { WitnessProveResult } from '../models/witness-prove-result';
 import { WitnessVerifyModel } from '../models/witness-verify';
 import { AssetsService } from './assets.service';
 import { PriceService } from './price.service';
@@ -36,9 +34,9 @@ export class ZkService {
     const a = await this.contract.getSignal(address, len - 2)
     const b = await this.contract.getSignal(address, len - 1)
 
-    const price_a = proofModel.proofs[0].price / 1000000000
-    const price_b = proofModel.proofs[1].price / 1000000000
-    const price_now = this.priceService.getBtcPrice()
+    const price_a = MathHelper.floorNumber(proofModel.proofs[0].price)
+    const price_b = MathHelper.floorNumber(proofModel.proofs[1].price)
+    const price_now = MathHelper.floorNumber(this.priceService.getBtcPrice())
 
     const proofLen = await this.contract.getProofLen(address)
 
@@ -51,15 +49,15 @@ export class ZkService {
       [proofModel.proofs[0].action, proofModel.proofs[1].action],
       [proofModel.proofs[0].amount, proofModel.proofs[1].amount],
       [proofModel.proofs[0].nonce, proofModel.proofs[1].nonce],
-      [Math.round(proofModel.usdBalance), Math.round(proofModel.btcBalance)],
+      [MathHelper.floorNumber(proofModel.usdBalance), MathHelper.floorNumber(proofModel.btcBalance)],
       previousBalanceHash,
       [a.hash, b.hash],
-      [Math.round(price_a), Math.round(price_b), Math.round(price_now)]
+      [price_a, price_b, price_now]
     )
 
     const proof = await this.witnessService.prove(input)
     
-    await this.contract.addPeriodProof(proof, [ price_now * 1000000000 ])
+    await this.contract.addPeriodProof(proof, [ MathHelper.numberToBigInt(price_now) ])
   }
 
   public verify(address: string, proofId: number): Observable<boolean> {
@@ -90,9 +88,9 @@ export class ZkService {
     const a = await this.contract.getSignal(address, 2 * proofId)
     const b = await this.contract.getSignal(address, 2 * proofId + 1)
 
-    const price_a = Math.round(a.price / 1000000000)
-    const price_b = Math.round(b.price/ 1000000000)
-    const price_now = Math.round(periodProof.prices[0] / 1000000000)
+    const price_a = MathHelper.bigIntToFloorNumber(a.price)
+    const price_b = MathHelper.bigIntToFloorNumber(b.price)
+    const price_now = MathHelper.bigIntToFloorNumber(periodProof.prices[0])
     
     let previousBalanceHash = '16865888626473709837690039826672233841362137295365548295255658602462103516806'
     if (proofId !== 0) {

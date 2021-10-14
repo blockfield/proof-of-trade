@@ -5,6 +5,7 @@ import { SmartContractInterface } from '../../shared/interfaces/smart-contract.i
 import { TraderModel } from '../../shared/models/trader.model';
 import { StrategyModel } from '../models/strategy.model';
 import { ProofItem } from '../models/proof-item';
+import SharedConsts from 'src/app/core/consts/shared-consts';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,7 @@ export class TradersService {
     }
 
     let proof: ProofItem[] = []
-    let prevProofBalance = 100000
+    let prevProofBalance = SharedConsts.initialBalance
     let prevTimestamp = await this.contract.getTimestampByBlockNumber(trader.creationBlockNumber)
     const createdDate = new Date(prevTimestamp)
     for (let i = 0; i < periodProofList.length; i++) {
@@ -61,7 +62,7 @@ export class TradersService {
       const traderModel = await this.getTraderModel(i)
 
       const createdDate = traderModel.date
-      const initBalance = 100000
+      const initBalance = SharedConsts.initialBalance
 
       let profitSum = 0
       let proofCount = 0

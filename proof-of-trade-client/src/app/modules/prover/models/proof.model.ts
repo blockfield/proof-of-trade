@@ -10,6 +10,7 @@ export class ProofModel {
     ) {}
 
     public toZkProofModel(): ZkProofModel {
+        console.log('zk model before', this)
         return {
             usdBalance: this.usdBalance,
             btcBalance: this.btcBalance,

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'src/app/modules/shared/services/toast.service';
 
 import { AccountModel } from '../../models/account.model';
 import { TraderService } from '../../services/trader.service';
@@ -16,7 +16,7 @@ export class AddAccountComponent implements OnInit {
   public isAdding = false
 
   constructor(
-    private toastr: ToastrService,
+    private toastr: ToastService,
     private traderService: TraderService,
   ) { }
 

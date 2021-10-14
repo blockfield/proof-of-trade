@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
+import { faCheckCircle, faTimesCircle } from '@fortawesome/free-regular-svg-icons';
 
 import { currenciesText } from 'src/app/core/enums/currency.enum';
 import { actionsText } from 'src/app/core/enums/signal-action.enum';
+import { ToastService } from 'src/app/modules/shared/services/toast.service';
 import { SignalModel } from '../../models/signal.model';
 import { TraderService } from '../../services/trader.service';
 
@@ -14,11 +15,13 @@ import { TraderService } from '../../services/trader.service';
 export class SignalsComponent implements OnInit {
   public actionsText = actionsText
   public currenciesText = currenciesText
+  public faCheckCircle = faCheckCircle
+  public faTimesCircle = faTimesCircle
 
   public signals: SignalModel[]
 
   constructor(
-    private toastr: ToastrService,
+    private toastr: ToastService,
     private traderService: TraderService,
   ) { }
 
@@ -27,7 +30,6 @@ export class SignalsComponent implements OnInit {
   }
 
   public initSignals(): void {
-    // todo can we use here just `public signals$`. Is new signal will be added?
     this.traderService.getMySignals().subscribe(
       (signals: SignalModel[]) => {
         this.signals = signals

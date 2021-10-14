@@ -1,15 +1,22 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark m-0">
     <div class="row w-100 p-0 m-0">
         <div class="col align-self-center m-0 p-0">
-            <a class="navbar-brand brand" (click)="goToHome()">Proof of Trade</a>
+            <div class="row m-0 p-0">
+                <div class="col-2 m-0 p-0 align-self-center text-center rounded-circle brand" (click)="goToHome()">
+                    <img class="icon" src="./assets/pot-icon-inverted.png"/>
+                </div>
+                <div class="col-10 align-self-center brand" (click)="goToHome()">
+                    <a class="navbar-brand">Proof of Trade</a>
+                </div>
+            </div>
         </div>
         <div class="col align-self-center m-0 p-0">
             <ng-container *ngIf="stateModel.state === 'user'; then userMenuTmpl"></ng-container>
             <ng-container *ngIf="stateModel.state === 'trader'; then traderMenuTmpl"></ng-container>
         </div>
-
         <div class="col m-0 p-0">
-            <button class="btn btn-lg btn-info float-right m-2"
+            <button class="btn btn-lg float-right m-2"
+                style="background-color: '#4e45ba'; color: white;"
                 (click)="connectToProvider()"
                 [disabled]="connectionModel.isDisconnectable()">
                 {{connectionModel.isConnectable() ? 'Connect' : 'Connected' }}

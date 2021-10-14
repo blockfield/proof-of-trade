@@ -6,8 +6,8 @@
         <ng-container *ngIf="strategy.proofIds.length > 0; then proofTmpl; else emptyProofTmpl"></ng-container>
     </div>
     <div class="card-footer text-muted">
-        {{strategy.date | date: 'd MMMM y'}}
-    </div>
+        {{strategy.date | timeago}}
+    </div> <!--  | date: 'd MMMM y' -->
 </div>
 
 <ng-template #emptyProofTmpl>
@@ -54,7 +54,7 @@
             </span>
         </div>
         <div class="col-4 float-right my-auto">
-            {{strategy.avgProofCountPerMonth * 2 | number : '1.2-2'}}
+            {{strategy.avgProofCountPerMonth * 2 | number : '1.0-0'}}
         </div>
     </div>
     <div class="row my-3">

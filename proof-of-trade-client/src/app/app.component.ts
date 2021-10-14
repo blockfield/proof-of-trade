@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
 import * as solanaWeb3 from '@solana/web3.js';
 import * as pyth from '@pythnetwork/client';
 
 import { ConnectedEvent } from './core/events/connected.event';
 import { PriceService } from './modules/shared/services/price.service';
+import { ToastService } from './modules/shared/services/toast.service';
 
 @Component({
   selector: 'app-root',
@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
 
   constructor(
     private priceService: PriceService,
-    private toastr: ToastrService
+    private toastr: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -72,7 +72,7 @@ export class AppComponent implements OnInit {
     this.connectedEvent = event
 
     if (this.connectedEvent.address) {
-      this.toastr.success('Connected to wallet: ' + this.connectedEvent.address.slice(0, 10) + '...', )
+      this.toastr.success(this.connectedEvent.address.slice(0, 4) + '.....' + this.connectedEvent.address.slice(-4), 'Connected to wallet:')
       return
     }
 

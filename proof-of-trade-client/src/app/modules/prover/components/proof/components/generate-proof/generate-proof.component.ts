@@ -1,9 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { map, mergeMap, tap } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'src/app/modules/shared/services/toast.service';
 
-import { ProofItem, ProofModel } from '../../../../models/proof.model';
-import { SignalModel } from '../../../../models/signal.model';
 import { TraderService } from '../../../../services/trader.service';
 
 @Component({
@@ -14,39 +11,52 @@ import { TraderService } from '../../../../services/trader.service';
 export class GenerateProofComponent implements OnInit {
   @Output() proofAdded = new EventEmitter<void>()
 
-  public model: ProofModel = new ProofModel(null, null, [])
+  public unprovedSignalsCount: number|undefined
+  public isGenerating = false
+  public canGenerate = false
 
   constructor(
-    private toastr: ToastrService,
+    private toastr: ToastService,
     private traderService: TraderService,
   ) { }
 
   ngOnInit(): void {
+    this.initUnprovedSignals()
+  }
+
+  private initUnprovedSignals(): void {
+    this.traderService.getMySignals().subscribe(
+      (signals) => {
+        this.unprovedSignalsCount = signals.filter(x => !x.isProved).length
+
+        this.canGenerate = this.unprovedSignalsCount === 2
+      },
+      (error: any) => {
+        this.toastr.error('Can not get unproved signals count')
+        console.log(error)
+      }
+    )
   }
 
   public generateProof(): void {
-    if (this.model.usdBalance === null || this.model.btcBalance === null) {
-      this.toastr.error('Empty balances')
-      return
-    }
+    this.flipGenerating()
 
-    this.traderService.getLastSignalsForProof().pipe(
-      map(
-        (signals: SignalModel[]) => signals.map(
-          (x, index) => new ProofItem(index, x.currency, x.action, x.amount, x.nonce, x.price)
-        )
-      ),
-      tap((proof: ProofItem[]) => { this.model.proofs = proof }),
-      mergeMap(() => this.traderService.addPeriodProof(this.model))
-    ).subscribe(
+    this.traderService.addPeriodProof().subscribe(
       () => {
         this.proofAdded.emit()
+        this.initUnprovedSignals()
+        this.flipGenerating()
       },
       (error: any) => {
         this.toastr.error('Can not add wrong proof')
         console.log(error)
+        this.flipGenerating()
       }
     )
+  }
+
+  private flipGenerating(): void {
+    this.isGenerating = !this.isGenerating
   }
 
 }

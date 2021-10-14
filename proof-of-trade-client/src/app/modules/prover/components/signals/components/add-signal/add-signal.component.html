@@ -2,7 +2,6 @@
     <div class="col">
         <div class="alert alert-info" role="alert">
             <h4 class="alert-heading my-3">New signal form</h4>
-            <p>To add new signal you need to fill out the form below</p>
             <hr>
             <p class="mb-0">Don't reload page until transaction is confirmed</p>
         </div>
@@ -12,16 +11,16 @@
     <div class="col">
         <div class="alert alert-warning" role="alert">
             <div class="row">
-                <div class="col">USD:</div>
-                <div class="col">{{balance.usd | number : '1.2-2'}}$</div>
+                <div class="col-md-4">USD:</div>
+                <div class="col-md-8">{{balance.usd | number : '1.0-0' | noComma}}$</div>
             </div>
         </div>
     </div>
     <div class="col">
         <div class="alert alert-warning" role="alert">
             <div class="row">
-                <div class="col">BTC:</div>
-                <div class="col">{{balance.btc}}</div>
+                <div class="col-md-4">BTC:</div>
+                <div class="col-md-8">{{balance.btc}}</div>
             </div>
         </div>
     </div>
