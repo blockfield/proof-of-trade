@@ -20,7 +20,7 @@ Trader path:
 3. They make such signals during a month (or any other period) and can create trading performance proof at the end of period. They insert all signals preimage data (ticker, amount, trade direction and nonce - private inputs of SNARK). Local frontend downloads signals' hashes and actives' prices on associated timestamps from blockchain (public inputs of SNARK). After that, the frontend calculates zero knowledge proof of period trade performance with performance percent (output of SNARK). Proof and percent are stored on blockchain too.
 
 User can:
-1. view list of traders and their performance percents
+1. view a list of all registered traders with their aggregated statistics (trade per month, percent per month, and trader’s experience)
 2. verify all percents by checking zk-proof locally on their browser
 3. chouse trader with the desired ratio of profits and risks
 4. contact with traders in order to buy their service
