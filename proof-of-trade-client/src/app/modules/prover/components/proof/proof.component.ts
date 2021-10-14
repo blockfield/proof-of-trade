@@ -9,21 +9,30 @@ import { TraderService } from '../../services/trader.service';
 })
 export class ProofComponent implements OnInit {
   public proof: ProofItem[]
+  public isLoading = true
 
   constructor(
     private traderService: TraderService,
   ) { }
 
   ngOnInit(): void {
-    this.initProof()
+    this.initProof(true)
   }
 
-  private initProof(): void {
+  private initProof(isOnInit: boolean = false): void {
     this.traderService.getProofList().subscribe(
       (proof: ProofItem[]) => {
         this.proof = proof
+        
+        if (isOnInit) {
+          this.flipLoading()
+        }
       }
     )
+  }
+
+  private flipLoading(): void {
+    this.isLoading = !this.isLoading
   }
 
   public onProofAdded(): void {

@@ -10,18 +10,21 @@
 
 <ng-template #loadedTmpl>
     <div class="row align-items-center m-3">
-        <div class="col-md">
+        <div class="col-xl-2"></div>
+        <div class="col-xl-8">
             <table class="table table-bordered m-1 w-100">
                 <tbody>
                     <tr>
                         <th class="align-middle text-center" scope="row">Address:</th>
                         <td class="align-middle text-center">
-                            <div class="row align-items-center">
-                                <div class="col-7">
-                                    <span class="copy float-right">{{trader.address | slice: 0 : 6}}.....{{trader.address | slice: -4}}</span>
-                                </div>
-                                <div class="col-5">
-                                    <fa-icon class="copy float-left" [icon]="faCopy" size="2x"></fa-icon>
+                            <div class="row align-items-center" #container>
+                                <div ngxClipboard class="row mx-3 w-100 copy" [cbContent]="trader.address" [container]="container" (cbOnSuccess)="copied($event)">
+                                    <div class="col-7 justify-content-center align-self-center">
+                                        <span class="float-right">{{trader.address | slice: 0 : 6}}.....{{trader.address | slice: -4}}</span>
+                                    </div>
+                                    <div class="col-5 justify-content-center align-self-center">
+                                        <fa-icon class="copy float-left" [icon]="faCopy" size="2x"></fa-icon>
+                                    </div>
                                 </div>
                             </div>
                         </td>
@@ -32,11 +35,12 @@
                     </tr>
                     <tr>
                         <th class="align-middle text-center" scope="row">Created:</th>
-                        <td class="align-middle text-center">{{trader.date | date: 'd MMMM y'}}</td>
+                        <td class="align-middle text-center">{{trader.date | date: 'd MMMM y hh:mm aa'}}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
+        <div class="col-xl-2"></div>
     </div>
     <div class="row align-items-center m-1 w-100">
         <div class="col-md">
@@ -44,16 +48,20 @@
                 <tbody>
                     <tr class="bg-dark">
                         <td class="align-middle text-center text-light">№</td>
-                        <td class="align-middle text-center text-light">Proof period</td>
+                        <td class="align-middle text-center text-light">Trades count</td>
+                        <td class="align-middle text-center text-light">From</td>
+                        <td class="align-middle text-center text-light">To</td>
                         <td class="align-middle text-center text-light">Profit</td>
                         <td class="align-middle text-center text-light">Verify proof</td>
                     </tr>
                     <tr *ngFor="let proof of trader.proof; let i = index">
                         <td class="align-middle text-center">{{i+1}}</td>
+                        <td class="align-middle text-center">2</td>
                         <td class="align-middle text-center">
-                            {{proof.dateFrom | date: 'd MMMM y'}}
-                            <span class="mx-2">-</span>
-                            {{proof.dateTo | date: 'd MMMM y'}}
+                            {{proof.dateFrom | date: 'd MMMM y hh:mm aa'}}
+                        </td>
+                        <td class="align-middle text-center">
+                            {{proof.dateTo | date: 'd MMMM y hh:mm aa'}}
                         </td>
                         <td class="align-middle text-center" [ngClass]="{'table-success': proof.percentage > 0, 'table-danger': proof.percentage < 0}">{{proof.percentage | number : '1.2-2'}}%</td>
                         <td class="align-middle text-center">

@@ -35,9 +35,9 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
         const signal = signals[index % 10]
 
         return {
-            blockNumber: Number(signal.blockNumber),
+            blockNumber: signal.blockNumber,
             hash: (new BN(signal.hash)).toString(),
-            price: Number(signal.prices[0])
+            price: signal.prices[0]
         }
     }
 
@@ -51,7 +51,7 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
         return proof.newBalanceHash
     }
 
-    public async addPeriodProof(witnessProof: WitnessProofRequestInterface, prices: number[]): Promise<void> {
+    public async addPeriodProof(witnessProof: WitnessProofRequestInterface, prices: bigint[]): Promise<void> {
         await this.addProofAction({
             pi_a: [(new BN(witnessProof.pi_a[0])).toBuffer(), (new BN(witnessProof.pi_a[1])).toBuffer()],
             pi_b: [
@@ -62,7 +62,7 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
             pnl: Number(witnessProof.publicSignals[1]),
             blockNumber: BigInt(0),
             newBalanceHash: (new BN(witnessProof.publicSignals[0])).toBuffer(),
-            prices: prices.map(x => BigInt(x))
+            prices: prices
         })
     }
 
@@ -103,7 +103,7 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
                         pi_b: proof.pi_b.map(x => x.map(y => (new BN(y)).toString())),
                         pi_c: proof.pi_c.map(x => (new BN(x)).toString()),
                     },
-                    prices: proof.prices.map(x => Number(x)),
+                    prices: proof.prices,
                 }
             }
         )
@@ -123,7 +123,7 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
                         pi_b: proof.pi_b.map(x => x.map(y => (new BN(y)).toString())),
                         pi_c: proof.pi_c.map(x => (new BN(x)).toString()),
                     },
-                    prices: proof.prices.map(x => Number(x)),
+                    prices: proof.prices,
                 }
             }
         )

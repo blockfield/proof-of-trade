@@ -1,10 +1,10 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
 
 import { currenciesText } from 'src/app/core/enums/currency.enum';
 import { actionsText, SignalActionEnum } from 'src/app/core/enums/signal-action.enum';
 import { SignalStateEnum } from 'src/app/core/enums/signal-state.enum';
 import { BalanceModel } from 'src/app/modules/prover/models/balance.model';
+import { ToastService } from 'src/app/modules/shared/services/toast.service';
 import { SignalModel } from '../../../../models/signal.model';
 import { SignalService } from '../../../../services/signal.service';
 import { TraderService } from '../../../../services/trader.service';
@@ -28,7 +28,7 @@ export class AddSignalComponent implements OnInit {
   public addingStep: number = 0
 
   constructor(
-    private toastr: ToastrService,
+    private toastr: ToastService,
     private traderService: TraderService,
     private signalService: SignalService,
   ) { }
@@ -73,7 +73,7 @@ export class AddSignalComponent implements OnInit {
         let usd = this.balance.usd
         let btc = this.balance.btc
 
-        const usdDiff = Number(newSignal.amount) * Number(newSignal.price / 1000000000)
+        const usdDiff = newSignal.amount * newSignal.price
         const btcDiff = newSignal.amount
 
         if (newSignal.action === SignalActionEnum.Buy) {

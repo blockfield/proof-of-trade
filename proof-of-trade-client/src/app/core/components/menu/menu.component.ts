@@ -58,6 +58,7 @@ export class MenuComponent implements OnInit {
 
     this.walletService.connect().subscribe(
       (account: string) => {
+        console.log('connect to provider', account)
         this.connectedEvent.emit(new ConnectedEvent(account, null))
         this.connectionModel.setConnectionStatus(ProviderStatusEnum.CONNECTED)
       },

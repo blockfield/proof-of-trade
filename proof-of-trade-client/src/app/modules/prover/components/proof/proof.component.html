@@ -1,11 +1,18 @@
 <div class="row m-3">
-    <div class="col-xl text-center">
-        <ng-container *ngIf="proof && proof.length > 0; then proofTmpl; else noProofTmpl"></ng-container>
+    <div class="col-xl-8 text-center">
+        <ng-container *ngIf="isLoading; then loadingTmpl; else loadedTmpl"></ng-container>
     </div>
-    <div class="col-xl text-center">
+    <div class="col-xl-4 text-center">
         <app-generate-proof (proofAdded)="onProofAdded()"></app-generate-proof>
     </div>
 </div>
+
+<ng-template #loadingTmpl>
+</ng-template>
+
+<ng-template #loadedTmpl>
+    <ng-container *ngIf="proof && proof.length > 0; then proofTmpl; else noProofTmpl"></ng-container>
+</ng-template>
 
 <ng-template #proofTmpl>
     <table class="table table-bordered m-1 w-100">
@@ -20,8 +27,8 @@
             <tr *ngFor="let proofItem of proof; let i = index">
                 <td class="align-middle text-center">{{i+1}}</td>
                 <td class="align-middle text-center">2</td>
-                <td class="align-middle text-center">{{proofItem.dateFrom | date: 'd MMMM y'}}</td>
-                <td class="align-middle text-center">{{proofItem.dateTo | date: 'd MMMM y'}}</td>
+                <td class="align-middle text-center">{{proofItem.dateFrom | date: 'd MMMM y hh:mm aa'}}</td>
+                <td class="align-middle text-center">{{proofItem.dateTo | date: 'd MMMM y hh:mm aa'}}</td>
                 <td class="align-middle text-center" [ngClass]="{'table-success': proofItem.percentage > 0, 'table-danger': proofItem.percentage < 0}">{{proofItem.percentage | number : '1.2-2'}}%</td>
             </tr>
         </tbody>

@@ -2,12 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 import { faCopy } from '@fortawesome/free-regular-svg-icons';
 import { NgxSpinnerService } from "ngx-spinner";
-import { ToastrService } from 'ngx-toastr';
 
 import { verificationProofText } from 'src/app/core/enums/verification-proof.enum';
 import { TradersService } from 'src/app/modules/verifier/services/traders.service';
 import { ZkService } from 'src/app/modules/shared/services/zk.service';
 import { TraderModel } from '../../../shared/models/trader.model';
+import { ToastService } from 'src/app/modules/shared/services/toast.service';
 
 @Component({
   selector: 'app-trader',
@@ -23,14 +23,14 @@ export class TraderComponent implements OnInit {
   constructor(
     private spinner: NgxSpinnerService,
     private route: ActivatedRoute,
-    private toastr: ToastrService,
+    private toastr: ToastService,
     private tradersService: TradersService,
     private zkService: ZkService,
   ) { }
 
   ngOnInit(): void {
-    this.initTrader()
     this.initSpinner()
+    this.initTrader()
   }
 
   private initTrader(): void {
@@ -48,6 +48,12 @@ export class TraderComponent implements OnInit {
 
   private initSpinner(): void {
     this.spinner.show()
+  }
+
+  public copied(event: any): void {
+    if (event.isSuccess) {
+      this.toastr.success('Address succesfully copied')
+    }
   }
 
   public verifyProof(proofId: number): void {

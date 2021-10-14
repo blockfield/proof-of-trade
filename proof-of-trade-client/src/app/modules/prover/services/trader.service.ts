@@ -1,8 +1,9 @@
-import { ThrowStmt } from '@angular/compiler';
 import { Inject, Injectable } from '@angular/core';
 import { asapScheduler, forkJoin, from, Observable, scheduled } from 'rxjs';
-import { map, mergeMap, takeLast, tap } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
+import SharedConsts from 'src/app/core/consts/shared-consts';
 import { SignalActionEnum } from 'src/app/core/enums/signal-action.enum';
+import MathHelper from 'src/app/core/helpers/math.helper';
 import { StorageService } from 'src/app/modules/shared/services/storage.service';
 import { SmartContractInterface } from '../../shared/interfaces/smart-contract.interface';
 import { WalletService } from '../../shared/services/wallet.service';
@@ -38,7 +39,7 @@ export class TraderService {
 
   public getMyStorageBalance(): Observable<BalanceModel> {
     return this.getStorageBalances().pipe(
-      map((balances) => balances[this.walletService.getAddress()] || new BalanceModel(100000, 0))
+      map((balances) => balances[this.walletService.getAddress()] || new BalanceModel(SharedConsts.initialBalance, 0))
     )
   }
 
@@ -55,7 +56,7 @@ export class TraderService {
     }
 
     let proof: ProofItem[] = []
-    let prevProofBalance = 100000
+    let prevProofBalance = SharedConsts.initialBalance
     let prevTimestamp = await this.contract.getTimestampByBlockNumber(trader.creationBlockNumber)
     for (let i = 0; i < periodProofList.length; i++) {
       const periodProof = periodProofList[i]
@@ -93,7 +94,7 @@ export class TraderService {
             }
 
             let newSignal = new SignalModel(signal.currency, signal.amount, signal.nonce, signal.action)
-            newSignal.price = result.newSignal.price
+            newSignal.price = MathHelper.bigIntToFloorNumber(result.newSignal.price)
 
             signals.push(newSignal)
 
@@ -118,7 +119,7 @@ export class TraderService {
           let usd = balance.usd
           let btc = balance.btc
 
-          const usdDiff = Number(data.newSignal.amount) * Number(data.newSignal.price / 1000000000)
+          const usdDiff = Number(data.newSignal.amount) * Number(data.newSignal.price)
           const btcDiff = data.newSignal.amount
 
           if (data.newSignal.action === SignalActionEnum.Buy) {

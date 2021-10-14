@@ -1,6 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { map, mergeMap, tap } from 'rxjs/operators';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from 'src/app/modules/shared/services/toast.service';
 
 import { ProofItem, ProofModel } from '../../../../models/proof.model';
 import { SignalModel } from '../../../../models/signal.model';
@@ -15,9 +15,10 @@ export class GenerateProofComponent implements OnInit {
   @Output() proofAdded = new EventEmitter<void>()
 
   public model: ProofModel = new ProofModel(null, null, [])
+  public isGenerating = false
 
   constructor(
-    private toastr: ToastrService,
+    private toastr: ToastService,
     private traderService: TraderService,
   ) { }
 
@@ -25,8 +26,11 @@ export class GenerateProofComponent implements OnInit {
   }
 
   public generateProof(): void {
+    this.flipGenerating()
+
     if (this.model.usdBalance === null || this.model.btcBalance === null) {
       this.toastr.error('Empty balances')
+      this.flipGenerating()
       return
     }
 
@@ -41,12 +45,18 @@ export class GenerateProofComponent implements OnInit {
     ).subscribe(
       () => {
         this.proofAdded.emit()
+        this.flipGenerating()
       },
       (error: any) => {
         this.toastr.error('Can not add wrong proof')
         console.log(error)
+        this.flipGenerating()
       }
     )
+  }
+
+  private flipGenerating(): void {
+    this.isGenerating = !this.isGenerating
   }
 
 }
