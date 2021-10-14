@@ -90,7 +90,7 @@ export class AddSignalComponent implements OnInit {
         this.signal.clear()
       },
       (error: any) => {
-        this.toastr.error('Signal failed')
+        this.toastr.error('Max unproved signals - 2', 'Signal adding failed')
         console.log(error)
         this.signalState = SignalStateEnum.Failed
         this.signal.clear()

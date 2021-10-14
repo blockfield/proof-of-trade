@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { faCheckCircle, faTimesCircle } from '@fortawesome/free-regular-svg-icons';
 
 import { currenciesText } from 'src/app/core/enums/currency.enum';
 import { actionsText } from 'src/app/core/enums/signal-action.enum';
@@ -14,6 +15,8 @@ import { TraderService } from '../../services/trader.service';
 export class SignalsComponent implements OnInit {
   public actionsText = actionsText
   public currenciesText = currenciesText
+  public faCheckCircle = faCheckCircle
+  public faTimesCircle = faTimesCircle
 
   public signals: SignalModel[]
 

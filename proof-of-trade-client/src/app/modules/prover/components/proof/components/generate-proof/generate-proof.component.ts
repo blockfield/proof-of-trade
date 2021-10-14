@@ -1,11 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { forkJoin } from 'rxjs';
-import { map, mergeMap, tap } from 'rxjs/operators';
-import { BalanceModel } from 'src/app/modules/prover/models/balance.model';
 import { ToastService } from 'src/app/modules/shared/services/toast.service';
 
-import { ProofItem, ProofModel } from '../../../../models/proof.model';
-import { SignalModel } from '../../../../models/signal.model';
 import { TraderService } from '../../../../services/trader.service';
 
 @Component({
@@ -16,8 +11,9 @@ import { TraderService } from '../../../../services/trader.service';
 export class GenerateProofComponent implements OnInit {
   @Output() proofAdded = new EventEmitter<void>()
 
-  public model: ProofModel = new ProofModel(null, null, [])
+  public unprovedSignalsCount: number|undefined
   public isGenerating = false
+  public canGenerate = false
 
   constructor(
     private toastr: ToastService,
@@ -25,32 +21,30 @@ export class GenerateProofComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.initUnprovedSignals()
+  }
+
+  private initUnprovedSignals(): void {
+    this.traderService.getMySignals().subscribe(
+      (signals) => {
+        this.unprovedSignalsCount = signals.filter(x => !x.isProved).length
+
+        this.canGenerate = this.unprovedSignalsCount === 2
+      },
+      (error: any) => {
+        this.toastr.error('Can not get unproved signals count')
+        console.log(error)
+      }
+    )
   }
 
   public generateProof(): void {
     this.flipGenerating()
 
-    forkJoin({
-      signals: this.traderService.getLastSignalsForProof(),
-      balances: this.traderService.getMyStorageBalance()
-    }).pipe(
-      mergeMap((result) => {
-        if (result.signals.length < 2) {
-          throw new Error('No signals')
-        }
-
-        this.model.proofs = result.signals.map(
-          (x, index) => new ProofItem(index, x.currency, x.action, x.amount, x.nonce, x.price)
-        )
-
-        this.model.usdBalance = result.balances.slice(-3)[0].usd
-        this.model.btcBalance = result.balances.slice(-3)[0].btc
-        
-        return this.traderService.addPeriodProof(this.model)
-      })
-    ).subscribe(
+    this.traderService.addPeriodProof().subscribe(
       () => {
         this.proofAdded.emit()
+        this.initUnprovedSignals()
         this.flipGenerating()
       },
       (error: any) => {

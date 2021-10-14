@@ -10,9 +10,14 @@
 <div class="row">
     <div class="col">
         <div class="alert alert-dark shadow-lg rounded-lg">
-            <div class="row">
+            <div *ngIf="unprovedSignalsCount !== undefined" class="row m-2">
                 <div class="col text-center">
-                    <button type="submit" class="btn btn-success" (click)="generateProof()" [disabled]="isGenerating">
+                    <span>Unproved signals: {{unprovedSignalsCount}}</span>
+                </div>
+            </div>
+            <div class="row m-2">
+                <div class="col text-center">
+                    <button type="submit" class="btn btn-success" (click)="generateProof()" [disabled]="!canGenerate || isGenerating">
                         <span class="p-3">{{isGenerating ? 'Generating...' : 'Generate Proof'}}</span>
                     </button>
                 </div>

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { asapScheduler, forkJoin, from, Observable, scheduled } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { map, mergeMap, tap } from 'rxjs/operators';
 import SharedConsts from 'src/app/core/consts/shared-consts';
 import { SignalActionEnum } from 'src/app/core/enums/signal-action.enum';
 import MathHelper from 'src/app/core/helpers/math.helper';
@@ -10,7 +10,9 @@ import { WalletService } from '../../shared/services/wallet.service';
 import { ZkService } from '../../shared/services/zk.service';
 import { BalanceModel } from '../models/balance.model';
 import { ProofItem } from '../models/proof-item';
+import { ProofItem as SignalProofItem } from '../models/proof.model';
 import { ProofModel } from '../models/proof.model';
+import { ProofModel as ZkProofModel } from 'src/app/modules/shared/models/proof.model';
 import { SignalModel } from '../models/signal.model';
 
 @Injectable({
@@ -73,7 +75,16 @@ export class TraderService {
   }
 
   public addSignal(signal: SignalModel, hash: string): Observable<SignalModel> {
-    return from(this.contract.addSignal(hash)).pipe(
+    return this.getSignalsMap().pipe(
+      tap((signalsMap) => {
+        let signals = signalsMap[this.walletService.getAddress()] || []
+
+        const unprovedCount = signals.filter(x => !x.isProved).length
+        if (unprovedCount >= 2) {
+          throw new Error('You need generate proof for current signals')
+        }
+      }),
+      mergeMap(() => this.contract.addSignal(hash)),
       mergeMap(() => forkJoin({
           map: this.getSignalsMap(),
           newSignal: this.getSignalsMap().pipe(
@@ -93,7 +104,7 @@ export class TraderService {
               signals = []
             }
 
-            let newSignal = new SignalModel(signal.currency, signal.amount, signal.nonce, signal.action)
+            let newSignal = new SignalModel(signals.length, signal.currency, signal.amount, signal.nonce, signal.action)
             newSignal.price = MathHelper.bigIntToFloorNumber(result.newSignal.price)
 
             signals.push(newSignal)
@@ -154,9 +165,9 @@ export class TraderService {
     )
   }
 
-  public getLastSignalsForProof(): Observable<SignalModel[]> {
+  public getNextSignalsForProof(): Observable<SignalModel[]> {
     return this.getMySignals().pipe(
-      map((signals: SignalModel[]) => signals.slice(-2))
+      map((signals: SignalModel[]) => signals.filter(x => !x.isProved).slice(0, 2))
     )
   }
 
@@ -166,7 +177,39 @@ export class TraderService {
     )
   }
 
-  public addPeriodProof(model: ProofModel): Observable<void> {
-    return from(this.zkService.prove(model.toZkProofModel()))
+  public addPeriodProof(): Observable<void> {
+    return forkJoin({
+      signals: this.getNextSignalsForProof(),
+      balances: this.getMyStorageBalance()
+    }).pipe(
+      map((result) => {
+        if (result.signals.length < 2) {
+          throw new Error('No signals')
+        }
+
+        let balanceIndex = Math.floor(result.signals[0].id / 2) * 2
+
+        return new ProofModel(
+          result.balances[balanceIndex].usd,
+          result.balances[balanceIndex].btc,
+          result.signals.map(
+            (x, index) => new SignalProofItem(index, x.currency, x.action, x.amount, x.nonce, x.price)
+          )
+        ).toZkProofModel()
+      }),
+      mergeMap((model: ZkProofModel) => this.zkService.prove(model)),
+      mergeMap(() => this.getSignalsMap()),
+      map(
+        (signalsMap) => {
+          signalsMap[this.walletService.getAddress()]
+            .filter(x => !x.isProved)
+            .slice(0, 2)
+            .every(x => x.isProved = true)
+
+            return signalsMap
+        }
+      ),
+      mergeMap((signalsMap) => this.storageService.set(this.signalsKey, signalsMap))
+    )
   }
 }

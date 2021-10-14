@@ -10,18 +10,18 @@ export class ToastService {
     private toastr: ToastrService,
   ) { }
 
-  public success(message: string): void {
+  public success(message: string, title: string|null = null): void {
     this.toastr.clear()
 
-    this.toastr.success(message, null, {
+    this.toastr.success(message, title, {
       positionClass: 'toast-bottom-right'
     })
   }
 
-  public error(message: string): void {
+  public error(message: string, title: string|null = null): void {
     this.toastr.clear()
     
-    this.toastr.error(message, null, {
+    this.toastr.error(message, title, {
       positionClass: 'toast-bottom-right'
     })
   }

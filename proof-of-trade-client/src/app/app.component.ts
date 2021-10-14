@@ -72,7 +72,7 @@ export class AppComponent implements OnInit {
     this.connectedEvent = event
 
     if (this.connectedEvent.address) {
-      this.toastr.success('Connected to wallet: ' + this.connectedEvent.address.slice(0, 10) + '...', )
+      this.toastr.success(this.connectedEvent.address.slice(0, 4) + '.....' + this.connectedEvent.address.slice(-4), 'Connected to wallet:')
       return
     }
 
