@@ -39,8 +39,8 @@ export class AddSignalComponent implements OnInit {
 
   private initBalance(): void {
     this.traderService.getMyStorageBalance().subscribe(
-      (balance) => {
-        this.balance = balance
+      (balances) => {
+        this.balance = balances.slice(-1)[0]
       },
       (error: any) => {
         this.toastr.error('Something went wrong')

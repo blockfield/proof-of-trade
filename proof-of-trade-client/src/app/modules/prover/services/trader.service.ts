@@ -31,15 +31,15 @@ export class TraderService {
     return from(this.contract.newTrader(email))
   }
 
-  public getStorageBalances(): Observable<{[address: string]: BalanceModel}> {
-    return this.storageService.get<{[address: string]: BalanceModel}>(this.balancesKey).pipe(
+  public getStorageBalances(): Observable<{[address: string]: BalanceModel[]}> {
+    return this.storageService.get<{[address: string]: BalanceModel[]}>(this.balancesKey).pipe(
       map((balances) => balances || {})
     )
   }
 
-  public getMyStorageBalance(): Observable<BalanceModel> {
+  public getMyStorageBalance(): Observable<BalanceModel[]> {
     return this.getStorageBalances().pipe(
-      map((balances) => balances[this.walletService.getAddress()] || new BalanceModel(SharedConsts.initialBalance, 0))
+      map((balances) => balances[this.walletService.getAddress()] || [new BalanceModel(SharedConsts.initialBalance, 0)])
     )
   }
 
@@ -110,14 +110,12 @@ export class TraderService {
       ),
       mergeMap((newSignal) => forkJoin({
         balances: this.getStorageBalances(),
-        myBalance: this.getMyStorageBalance(),
+        myBalances: this.getMyStorageBalance(),
         newSignal: scheduled([newSignal], asapScheduler),
       }).pipe(
         mergeMap((data) => {
-          let balance = data.myBalance
-
-          let usd = balance.usd
-          let btc = balance.btc
+          let usd = data.myBalances.slice(-1)[0].usd
+          let btc = data.myBalances.slice(-1)[0].btc
 
           const usdDiff = Number(data.newSignal.amount) * Number(data.newSignal.price)
           const btcDiff = data.newSignal.amount
@@ -130,7 +128,9 @@ export class TraderService {
             btc -= btcDiff
           }
 
-          data.balances[this.walletService.getAddress()] = new BalanceModel(usd, btc)
+          data.myBalances.push(new BalanceModel(usd, btc))
+
+          data.balances[this.walletService.getAddress()] = data.myBalances
 
           return this.storageService.set(this.balancesKey, data.balances).pipe(
             map(() => data.newSignal)

@@ -1,5 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { forkJoin } from 'rxjs';
 import { map, mergeMap, tap } from 'rxjs/operators';
+import { BalanceModel } from 'src/app/modules/prover/models/balance.model';
 import { ToastService } from 'src/app/modules/shared/services/toast.service';
 
 import { ProofItem, ProofModel } from '../../../../models/proof.model';
@@ -28,20 +30,24 @@ export class GenerateProofComponent implements OnInit {
   public generateProof(): void {
     this.flipGenerating()
 
-    if (this.model.usdBalance === null || this.model.btcBalance === null) {
-      this.toastr.error('Empty balances')
-      this.flipGenerating()
-      return
-    }
+    forkJoin({
+      signals: this.traderService.getLastSignalsForProof(),
+      balances: this.traderService.getMyStorageBalance()
+    }).pipe(
+      mergeMap((result) => {
+        if (result.signals.length < 2) {
+          throw new Error('No signals')
+        }
 
-    this.traderService.getLastSignalsForProof().pipe(
-      map(
-        (signals: SignalModel[]) => signals.map(
+        this.model.proofs = result.signals.map(
           (x, index) => new ProofItem(index, x.currency, x.action, x.amount, x.nonce, x.price)
         )
-      ),
-      tap((proof: ProofItem[]) => { this.model.proofs = proof }),
-      mergeMap(() => this.traderService.addPeriodProof(this.model))
+
+        this.model.usdBalance = result.balances.slice(-3)[0].usd
+        this.model.btcBalance = result.balances.slice(-3)[0].btc
+        
+        return this.traderService.addPeriodProof(this.model)
+      })
     ).subscribe(
       () => {
         this.proofAdded.emit()
