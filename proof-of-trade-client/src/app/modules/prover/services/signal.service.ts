@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { SignalModel } from '../models/signal.model';
-import { ProverModule } from '../prover.module';
 
 @Injectable({
   providedIn: 'root'

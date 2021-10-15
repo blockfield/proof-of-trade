@@ -10,18 +10,17 @@ export class ProofModel {
     ) {}
 
     public toZkProofModel(): ZkProofModel {
-        console.log('zk model before', this)
         return {
             usdBalance: this.usdBalance,
             btcBalance: this.btcBalance,
-            proofs: this.proofs.map((x: ProofItem) => {return {
+            proofs: this.proofs.map((x: ProofItem) => { return {
                 id: x.id,
                 currency: x.currency,
                 action: x.action,
                 amount: x.amount,
                 nonce: x.nonce,
                 price: x.price,
-            }})
+            } })
         }
     }
 }

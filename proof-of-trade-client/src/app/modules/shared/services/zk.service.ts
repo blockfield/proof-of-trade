@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { from, Observable } from 'rxjs';
+import SharedConsts from 'src/app/core/consts/shared-consts';
 import MathHelper from 'src/app/core/helpers/math.helper';
 import { SmartContractInterface } from '../interfaces/smart-contract.interface';
 import { ProofModel } from '../models/proof.model';
@@ -40,7 +41,7 @@ export class ZkService {
 
     const proofLen = await this.contract.getProofLen(address)
 
-    let previousBalanceHash = '16865888626473709837690039826672233841362137295365548295255658602462103516806'
+    let previousBalanceHash = '639470893622803446635721399483204517617715645899470263648676575355455357367'//'16865888626473709837690039826672233841362137295365548295255658602462103516806'
     if (proofLen !== 0) {
         previousBalanceHash = await this.contract.getPrevBalanceHash(address, proofLen - 1)
     }
@@ -49,13 +50,17 @@ export class ZkService {
       [proofModel.proofs[0].action, proofModel.proofs[1].action],
       [proofModel.proofs[0].amount, proofModel.proofs[1].amount],
       [proofModel.proofs[0].nonce, proofModel.proofs[1].nonce],
-      [MathHelper.floorNumber(proofModel.usdBalance), MathHelper.floorNumber(proofModel.btcBalance)],
+      [proofModel.usdBalance, proofModel.btcBalance],
       previousBalanceHash,
       [a.hash, b.hash],
-      [price_a, price_b, price_now]
+      [MathHelper.removeDecimalDigitsNumber(price_a), MathHelper.removeDecimalDigitsNumber(price_b), price_now]
     )
 
+    console.log('imput', input)
+
     const proof = await this.witnessService.prove(input)
+
+    console.log('proof', proof)
     
     await this.contract.addPeriodProof(proof, [ MathHelper.numberToBigInt(price_now) ])
   }

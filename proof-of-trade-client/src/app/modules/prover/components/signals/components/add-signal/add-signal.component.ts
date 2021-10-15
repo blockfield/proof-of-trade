@@ -22,6 +22,7 @@ export class AddSignalComponent implements OnInit {
 
   public actionsText = actionsText
   public currenciesText = currenciesText
+  public maxDecimals = 10 ** SharedConsts.maxDecimalDigits
 
   public signal: SignalModel = new SignalModel()
   public balance: BalanceModel

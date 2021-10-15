@@ -2,11 +2,11 @@ import { ModuleWithProviders, NgModule, Type } from '@angular/core';
 import { ToastrModule } from 'ngx-toastr';
 import { TimeagoModule } from 'ngx-timeago';
 import { ClipboardModule } from 'ngx-clipboard';
+import { NgxMaskModule } from 'ngx-mask'
 
 import { SmartContractInterface } from './interfaces/smart-contract.interface';
 import { WalletProviderInterface } from './interfaces/wallet-provider.interface';
 import { NoCommaPipe } from './pipes/no-comma.pipe';
-
 
 
 @NgModule({
@@ -14,11 +14,13 @@ import { NoCommaPipe } from './pipes/no-comma.pipe';
     NoCommaPipe,
   ],
   exports: [
+    NgxMaskModule,
     NoCommaPipe,
     TimeagoModule,
     ClipboardModule,
   ],
   imports: [
+    NgxMaskModule.forRoot(),
     ToastrModule.forRoot(),
     TimeagoModule.forRoot(),
     ClipboardModule,

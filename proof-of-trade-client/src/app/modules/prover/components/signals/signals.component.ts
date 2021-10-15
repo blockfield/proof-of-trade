@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { faCheckCircle, faTimesCircle } from '@fortawesome/free-regular-svg-icons';
+import SharedConsts from 'src/app/core/consts/shared-consts';
 
 import { currenciesText } from 'src/app/core/enums/currency.enum';
 import { actionsText } from 'src/app/core/enums/signal-action.enum';
@@ -17,6 +18,7 @@ export class SignalsComponent implements OnInit {
   public currenciesText = currenciesText
   public faCheckCircle = faCheckCircle
   public faTimesCircle = faTimesCircle
+  public maxDecimals = 10 ** SharedConsts.maxDecimalDigits
 
   public signals: SignalModel[]
 

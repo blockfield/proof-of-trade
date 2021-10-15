@@ -5,7 +5,7 @@ import SharedConsts from 'src/app/core/consts/shared-consts';
 import { SignalActionEnum } from 'src/app/core/enums/signal-action.enum';
 import MathHelper from 'src/app/core/helpers/math.helper';
 import { StorageService } from 'src/app/modules/shared/services/storage.service';
-import { SmartContractInterface } from '../../shared/interfaces/smart-contract.interface';
+import { PeriodProofResponseInterface, SmartContractInterface } from '../../shared/interfaces/smart-contract.interface';
 import { WalletService } from '../../shared/services/wallet.service';
 import { ZkService } from '../../shared/services/zk.service';
 import { BalanceModel } from '../models/balance.model';
@@ -41,7 +41,15 @@ export class TraderService {
 
   public getMyStorageBalance(): Observable<BalanceModel[]> {
     return this.getStorageBalances().pipe(
-      map((balances) => balances[this.walletService.getAddress()] || [new BalanceModel(SharedConsts.initialBalance, 0)])
+      map(
+        (balances) => 
+          balances[this.walletService.getAddress()] ||
+          [ new BalanceModel(
+              MathHelper.decimalDigitsNumber(SharedConsts.initialUsdBalance),
+              MathHelper.decimalDigitsNumber(SharedConsts.initialBtcBalance)
+            )
+          ]
+      )
     )
   }
 
@@ -52,13 +60,13 @@ export class TraderService {
   private async getProof(): Promise<ProofItem[]> {
     const trader = await this.contract.getTrader(null)
 
-    let periodProofList = []
+    let periodProofList: PeriodProofResponseInterface[] = []
     for (let j = 0; j < Math.floor(trader.proofsCount / 10) + 1; j++) {
       periodProofList = [...periodProofList, ...(await this.contract.getPeriodProofsPage(trader.address, j))]
     }
 
     let proof: ProofItem[] = []
-    let prevProofBalance = SharedConsts.initialBalance
+    let prevProofBalance = MathHelper.decimalDigitsNumber(SharedConsts.initialUsdBalance)
     let prevTimestamp = await this.contract.getTimestampByBlockNumber(trader.creationBlockNumber)
     for (let i = 0; i < periodProofList.length; i++) {
       const periodProof = periodProofList[i]
@@ -97,7 +105,7 @@ export class TraderService {
             let signals = (signalsMap[this.walletService.getAddress()] || [])
 
             let newSignal = new SignalModel(signals.length, signal.currency, signal.amount, signal.nonce, signal.action)
-            newSignal.price = MathHelper.bigIntToFloorNumber(result.newSignal.price)
+            newSignal.price = MathHelper.decimalDigitsNumber(MathHelper.bigIntToFloorNumber(result.newSignal.price))
 
             signals.push(newSignal)
 
@@ -119,7 +127,7 @@ export class TraderService {
           let usd = data.myBalances.slice(-1)[0].usd
           let btc = data.myBalances.slice(-1)[0].btc
 
-          const usdDiff = data.newSignal.amount * data.newSignal.price
+          const usdDiff = MathHelper.removeDecimalDigitsNumber(data.newSignal.amount * data.newSignal.price)
           const btcDiff = data.newSignal.amount
 
           if (data.newSignal.action === SignalActionEnum.Buy) {

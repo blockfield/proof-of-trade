@@ -21,7 +21,6 @@ import { PhantomProvider } from 'src/app/core/wallet-providers/phantom.provider'
 import { Contract } from 'src/app/api/solana/contract';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
-
 @NgModule({
   declarations: [
     AddAccountComponent,

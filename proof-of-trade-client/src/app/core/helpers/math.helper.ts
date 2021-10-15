@@ -12,4 +12,12 @@ export default class MathHelper {
     public static floorNumber(value: number): number {
         return Math.floor(value)
     }
+
+    public static decimalDigitsNumber(value: number): number {
+        return MathHelper.floorNumber(value * (10 ** SharedConsts.maxDecimalDigits))
+    }
+
+    public static removeDecimalDigitsNumber(value: number): number {
+        return MathHelper.floorNumber(value / (10 ** SharedConsts.maxDecimalDigits))
+    }
 }
