@@ -56,7 +56,7 @@
                     </tr>
                     <tr *ngFor="let proof of trader.proof; let i = index">
                         <td class="align-middle text-center">{{i+1}}</td>
-                        <td class="align-middle text-center">2</td>
+                        <td class="align-middle text-center">{{tradeSize}}</td>
                         <td class="align-middle text-center">
                             {{proof.dateFrom | date: 'd MMMM y hh:mm aa'}}
                         </td>

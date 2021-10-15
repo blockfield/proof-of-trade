@@ -74,13 +74,13 @@ export class TraderService {
     return proof
   }
 
-  public addSignal(signal: SignalModel, hash: string): Observable<SignalModel> {
+  public addSignal(signal: SignalModel, hash: string): Observable<{newBalance: BalanceModel, newSignal: SignalModel}> {
     return this.getSignalsMap().pipe(
       tap((signalsMap) => {
         let signals = signalsMap[this.walletService.getAddress()] || []
 
         const unprovedCount = signals.filter(x => !x.isProved).length
-        if (unprovedCount >= 2) {
+        if (unprovedCount >= SharedConsts.tradeSize) {
           throw new Error('You need generate proof for current signals')
         }
       }),
@@ -88,21 +88,13 @@ export class TraderService {
       mergeMap(() => forkJoin({
           map: this.getSignalsMap(),
           newSignal: this.getSignalsMap().pipe(
-            map((signalsMap) => {
-              let signals = signalsMap[this.walletService.getAddress()]
-
-              return !!signals ? signals.length : 0
-            }),
+            map((signalsMap) => (signalsMap[this.walletService.getAddress()] || []).length),
             mergeMap((count: number) => this.contract.getSignal(this.walletService.getAddress(), count))
           )
         }).pipe(
           map((result) => {
             let signalsMap = result.map
-
-            let signals = signalsMap[this.walletService.getAddress()]
-            if (!signals) {
-              signals = []
-            }
+            let signals = (signalsMap[this.walletService.getAddress()] || [])
 
             let newSignal = new SignalModel(signals.length, signal.currency, signal.amount, signal.nonce, signal.action)
             newSignal.price = MathHelper.bigIntToFloorNumber(result.newSignal.price)
@@ -116,8 +108,7 @@ export class TraderService {
         )
       ),
       mergeMap((result) => this.storageService.set(this.signalsKey, result.storage).pipe(
-          map(() => result.newSignal)
-        )
+          map(() => result.newSignal))
       ),
       mergeMap((newSignal) => forkJoin({
         balances: this.getStorageBalances(),
@@ -128,7 +119,7 @@ export class TraderService {
           let usd = data.myBalances.slice(-1)[0].usd
           let btc = data.myBalances.slice(-1)[0].btc
 
-          const usdDiff = Number(data.newSignal.amount) * Number(data.newSignal.price)
+          const usdDiff = data.newSignal.amount * data.newSignal.price
           const btcDiff = data.newSignal.amount
 
           if (data.newSignal.action === SignalActionEnum.Buy) {
@@ -139,12 +130,19 @@ export class TraderService {
             btc -= btcDiff
           }
 
-          data.myBalances.push(new BalanceModel(usd, btc))
+          let newBalance = new BalanceModel(usd, btc)
+
+          data.myBalances.push(newBalance)
 
           data.balances[this.walletService.getAddress()] = data.myBalances
 
           return this.storageService.set(this.balancesKey, data.balances).pipe(
-            map(() => data.newSignal)
+            map(() => data.newSignal),
+            mergeMap(() => forkJoin({
+                newBalance: scheduled([newBalance], asapScheduler),
+                newSignal: scheduled([newSignal], asapScheduler),
+              })
+            )
           )
         })
       ))
@@ -167,7 +165,7 @@ export class TraderService {
 
   public getNextSignalsForProof(): Observable<SignalModel[]> {
     return this.getMySignals().pipe(
-      map((signals: SignalModel[]) => signals.filter(x => !x.isProved).slice(0, 2))
+      map((signals: SignalModel[]) => signals.filter(x => !x.isProved).slice(0, SharedConsts.tradeSize))
     )
   }
 
@@ -183,11 +181,11 @@ export class TraderService {
       balances: this.getMyStorageBalance()
     }).pipe(
       map((result) => {
-        if (result.signals.length < 2) {
+        if (result.signals.length < SharedConsts.tradeSize) {
           throw new Error('No signals')
         }
 
-        let balanceIndex = Math.floor(result.signals[0].id / 2) * 2
+        let balanceIndex = Math.floor(result.signals[0].id / SharedConsts.tradeSize) * SharedConsts.tradeSize
 
         return new ProofModel(
           result.balances[balanceIndex].usd,
@@ -203,7 +201,7 @@ export class TraderService {
         (signalsMap) => {
           signalsMap[this.walletService.getAddress()]
             .filter(x => !x.isProved)
-            .slice(0, 2)
+            .slice(0, SharedConsts.tradeSize)
             .every(x => x.isProved = true)
 
             return signalsMap

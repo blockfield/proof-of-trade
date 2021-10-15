@@ -8,6 +8,7 @@ import { TradersService } from 'src/app/modules/verifier/services/traders.servic
 import { ZkService } from 'src/app/modules/shared/services/zk.service';
 import { TraderModel } from '../../../shared/models/trader.model';
 import { ToastService } from 'src/app/modules/shared/services/toast.service';
+import SharedConsts from 'src/app/core/consts/shared-consts';
 
 @Component({
   selector: 'app-trader',
@@ -17,6 +18,7 @@ import { ToastService } from 'src/app/modules/shared/services/toast.service';
 export class TraderComponent implements OnInit {
   public verificationStatesText = verificationProofText
   public faCopy = faCopy
+  public tradeSize = SharedConsts.tradeSize
 
   public trader: TraderModel
 

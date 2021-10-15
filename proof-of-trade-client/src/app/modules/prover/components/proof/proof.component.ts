@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import SharedConsts from 'src/app/core/consts/shared-consts';
 import { ProofItem } from '../../models/proof-item';
 import { TraderService } from '../../services/trader.service';
 
@@ -10,6 +11,7 @@ import { TraderService } from '../../services/trader.service';
 export class ProofComponent implements OnInit {
   public proof: ProofItem[]
   public isLoading = true
+  public tradeSize = SharedConsts.tradeSize
 
   constructor(
     private traderService: TraderService,

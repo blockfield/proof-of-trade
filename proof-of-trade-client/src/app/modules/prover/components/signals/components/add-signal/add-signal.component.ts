@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import SharedConsts from 'src/app/core/consts/shared-consts';
 
 import { currenciesText } from 'src/app/core/enums/currency.enum';
 import { actionsText, SignalActionEnum } from 'src/app/core/enums/signal-action.enum';
@@ -67,30 +68,16 @@ export class AddSignalComponent implements OnInit {
     const hash = this.signalService.hash(this.signal)
 
     this.traderService.addSignal(this.signal, hash).subscribe(
-      (newSignal: SignalModel) => {
+      (result) => {
         this.signalState = SignalStateEnum.Successed
 
-        let usd = this.balance.usd
-        let btc = this.balance.btc
+        this.balance = result.newBalance
 
-        const usdDiff = newSignal.amount * newSignal.price
-        const btcDiff = newSignal.amount
-
-        if (newSignal.action === SignalActionEnum.Buy) {
-          usd -= usdDiff
-          btc += btcDiff
-        } else if (newSignal.action === SignalActionEnum.Sell) {
-          usd += usdDiff
-          btc -= btcDiff
-        }
-
-        this.balance = new BalanceModel(usd, btc)
-
-        this.signalAdded.emit(newSignal)
+        this.signalAdded.emit(result.newSignal)
         this.signal.clear()
       },
       (error: any) => {
-        this.toastr.error('Max unproved signals - 2', 'Signal adding failed')
+        this.toastr.error('Max unproved signals - ' + SharedConsts.tradeSize, 'Signal adding failed')
         console.log(error)
         this.signalState = SignalStateEnum.Failed
         this.signal.clear()

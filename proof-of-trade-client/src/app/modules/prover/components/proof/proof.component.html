@@ -26,7 +26,7 @@
             </tr>
             <tr *ngFor="let proofItem of proof; let i = index">
                 <td class="align-middle text-center">{{i+1}}</td>
-                <td class="align-middle text-center">2</td>
+                <td class="align-middle text-center">tradeSize</td>
                 <td class="align-middle text-center">{{proofItem.dateFrom | date: 'd MMMM y hh:mm aa'}}</td>
                 <td class="align-middle text-center">{{proofItem.dateTo | date: 'd MMMM y hh:mm aa'}}</td>
                 <td class="align-middle text-center" [ngClass]="{'table-success': proofItem.percentage > 0, 'table-danger': proofItem.percentage < 0}">{{proofItem.percentage | number : '1.2-2'}}%</td>

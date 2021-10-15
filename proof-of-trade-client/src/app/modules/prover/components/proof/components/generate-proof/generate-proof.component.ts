@@ -1,4 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import SharedConsts from 'src/app/core/consts/shared-consts';
 import { ToastService } from 'src/app/modules/shared/services/toast.service';
 
 import { TraderService } from '../../../../services/trader.service';
@@ -10,6 +11,8 @@ import { TraderService } from '../../../../services/trader.service';
 })
 export class GenerateProofComponent implements OnInit {
   @Output() proofAdded = new EventEmitter<void>()
+
+  public tradeSize = SharedConsts.tradeSize
 
   public unprovedSignalsCount: number|undefined
   public isGenerating = false
@@ -29,7 +32,7 @@ export class GenerateProofComponent implements OnInit {
       (signals) => {
         this.unprovedSignalsCount = signals.filter(x => !x.isProved).length
 
-        this.canGenerate = this.unprovedSignalsCount === 2
+        this.canGenerate = this.unprovedSignalsCount === SharedConsts.tradeSize
       },
       (error: any) => {
         this.toastr.error('Can not get unproved signals count')
