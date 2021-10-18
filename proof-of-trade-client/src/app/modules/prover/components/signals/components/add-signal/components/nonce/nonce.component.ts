@@ -9,6 +9,7 @@ import { SignalModel } from 'src/app/modules/prover/models/signal.model';
 export class NonceComponent implements OnInit {
   @Input() public signal: SignalModel
   @Output() ready = new EventEmitter();
+  @Output() back = new EventEmitter();
 
   constructor() { }
 
@@ -17,6 +18,10 @@ export class NonceComponent implements OnInit {
 
   public enterNonce(): void {
     this.ready.emit()
+  }
+
+  public backClick(): void {
+    this.back.emit()
   }
 
 }

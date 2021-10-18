@@ -32,13 +32,13 @@
                 <app-action [signal]="signal" (ready)="onReady()"></app-action>
             </ng-container>
             <ng-container *ngIf="addingStep === 1">
-                <app-currency [signal]="signal" (ready)="onReady()"></app-currency>
+                <app-currency [signal]="signal" (ready)="onReady()" (back)="onBack()"></app-currency>
             </ng-container>
             <ng-container *ngIf="addingStep === 2">
-                <app-amount [signal]="signal" [balance]="balance" (ready)="onReady()"></app-amount>
+                <app-amount [signal]="signal" [balance]="balance" (ready)="onReady()" (back)="onBack()"></app-amount>
             </ng-container>
             <ng-container *ngIf="addingStep === 3">
-                <app-nonce [signal]="signal" (ready)="onReady()"></app-nonce>
+                <app-nonce [signal]="signal" (ready)="onReady()" (back)="onBack()"></app-nonce>
             </ng-container>
             <ng-container *ngIf="addingStep === 4">
                 <app-final [signalState]="signalState" (ready)="onReady()"></app-final>

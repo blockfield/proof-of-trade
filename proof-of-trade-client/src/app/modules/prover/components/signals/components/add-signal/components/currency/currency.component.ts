@@ -10,6 +10,7 @@ import { SignalModel } from 'src/app/modules/prover/models/signal.model';
 export class CurrencyComponent implements OnInit {
   @Input() public signal: SignalModel
   @Output() ready = new EventEmitter();
+  @Output() back = new EventEmitter();
 
   public currencies: CurrencyEnum[] = currencies
   public currenciesText = currenciesText
@@ -22,6 +23,10 @@ export class CurrencyComponent implements OnInit {
   public selectCurrency(selectedCurrency: CurrencyEnum): void {
     this.signal.currency = selectedCurrency
     this.ready.emit()
+  }
+
+  public backClick(): void {
+    this.back.emit()
   }
 
 }

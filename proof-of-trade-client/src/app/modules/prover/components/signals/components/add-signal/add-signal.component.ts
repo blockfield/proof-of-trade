@@ -60,6 +60,12 @@ export class AddSignalComponent implements OnInit {
     this.addingStep = (this.addingStep + 1) % this.stepCount
   }
 
+  public onBack(): void {
+    if (this.addingStep > 0 && this.addingStep < this.stepCount -1) {
+      this.addingStep = (this.addingStep - 1) % this.stepCount
+    }
+  }
+
   public sendSignal(): void {
     if (!this.signal.currency || !this.signal.amount || !this.signal.nonce) {
       this.toastr.error('Signal\'s data is empty')

@@ -15,6 +15,7 @@ export class AmountComponent implements OnInit {
   @Input() public signal: SignalModel
   @Input() public balance: BalanceModel
   @Output() ready = new EventEmitter();
+  @Output() back = new EventEmitter();
 
   public amount: string
 
@@ -37,6 +38,10 @@ export class AmountComponent implements OnInit {
     this.signal.amount = amount
 
     this.ready.emit()
+  }
+
+  public backClick(): void {
+    this.back.emit()
   }
 
   public isBalanceEnoughAtMoment(amount: number): boolean {
