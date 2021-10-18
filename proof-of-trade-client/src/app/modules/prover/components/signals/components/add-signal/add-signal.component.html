@@ -35,7 +35,7 @@
                 <app-currency [signal]="signal" (ready)="onReady()"></app-currency>
             </ng-container>
             <ng-container *ngIf="addingStep === 2">
-                <app-amount [signal]="signal" (ready)="onReady()"></app-amount>
+                <app-amount [signal]="signal" [balance]="balance" (ready)="onReady()"></app-amount>
             </ng-container>
             <ng-container *ngIf="addingStep === 3">
                 <app-nonce [signal]="signal" (ready)="onReady()"></app-nonce>
@@ -46,7 +46,7 @@
             <hr>
             <p *ngIf="addingStep !== 4" class="mb-0">
                 <span class="mx-2">{{actionsText[signal.action] || '?'}}</span>
-                <span class="mx-2">{{signal.amount || '?'}}</span>
+                <span class="mx-2">{{signal.amount ? (signal.amount / maxDecimals | number : '1.4-4' | noComma) : '?'}}</span>
                 <span class="mx-2">{{currenciesText[signal.currency] || '?'}}</span>
             </p>
         </div>

@@ -37,11 +37,11 @@ export class ZkService {
 
     const price_a = MathHelper.floorNumber(proofModel.proofs[0].price)
     const price_b = MathHelper.floorNumber(proofModel.proofs[1].price)
-    const price_now = MathHelper.floorNumber(this.priceService.getBtcPrice())
+    const price_now = MathHelper.removeDecimalDigitsNumber(this.priceService.getBtcPriceValue())
 
     const proofLen = await this.contract.getProofLen(address)
 
-    let previousBalanceHash = '639470893622803446635721399483204517617715645899470263648676575355455357367'//'16865888626473709837690039826672233841362137295365548295255658602462103516806'
+    let previousBalanceHash = '639470893622803446635721399483204517617715645899470263648676575355455357367'
     if (proofLen !== 0) {
         previousBalanceHash = await this.contract.getPrevBalanceHash(address, proofLen - 1)
     }
@@ -56,11 +56,11 @@ export class ZkService {
       [MathHelper.removeDecimalDigitsNumber(price_a), MathHelper.removeDecimalDigitsNumber(price_b), price_now]
     )
 
-    console.log('imput', input)
+    console.log('input', input)
 
     const proof = await this.witnessService.prove(input)
 
-    console.log('proof', proof)
+    console.log('input', proof)
     
     await this.contract.addPeriodProof(proof, [ MathHelper.numberToBigInt(price_now) ])
   }
@@ -97,7 +97,7 @@ export class ZkService {
     const price_b = MathHelper.bigIntToFloorNumber(b.price)
     const price_now = MathHelper.bigIntToFloorNumber(periodProof.prices[0])
     
-    let previousBalanceHash = '16865888626473709837690039826672233841362137295365548295255658602462103516806'
+    let previousBalanceHash = '639470893622803446635721399483204517617715645899470263648676575355455357367'
     if (proofId !== 0) {
         previousBalanceHash = (await this.contract.getPeriodProofs(address, proofId - 1)).newBalanceHash;
     }
@@ -110,6 +110,8 @@ export class ZkService {
       [price_a, price_b],
       price_now
     )
+
+    console.log('witness', witnessVerify)
 
     return this.witnessService.verify(
       this.assetsService.getVerificationKey(),

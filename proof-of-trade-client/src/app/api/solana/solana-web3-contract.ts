@@ -12,7 +12,7 @@ export class SolanaWeb3Contract {
 
     constructor(address: string) {
         this.connection = new solanaWeb3.Connection(this.rpcEndpoint, this.commitment)
-        this.myPK = new solanaWeb3.PublicKey(address)
+        this.myPK = address ? new solanaWeb3.PublicKey(address) : new solanaWeb3.PublicKey('3m6xAFV5qTZg92Gt1RmdGjDfRuhjc2pbojpTnH45Ffo3') // temporary default for user
         this.provider = (window as any).solana
     }
 

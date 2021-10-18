@@ -63,6 +63,8 @@ export class AddSignalComponent implements OnInit {
   public sendSignal(): void {
     if (!this.signal.currency || !this.signal.amount || !this.signal.nonce) {
       this.toastr.error('Signal\'s data is empty')
+      this.signalState = SignalStateEnum.Failed
+      this.signal.clear()
       return
     }
 

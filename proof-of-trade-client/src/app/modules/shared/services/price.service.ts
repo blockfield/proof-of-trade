@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,11 @@ export class PriceService {
     this.btcPrice$.next(price)
   }
 
-  public getBtcPrice(): number {
+  public getBtcPrice(): Observable<number> {
+    return this.btcPrice$
+  }
+
+  public getBtcPriceValue(): number {
     return this.btcPrice$.getValue()
   }
 }
