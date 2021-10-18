@@ -11,6 +11,6 @@ export class PhantomProvider implements WalletProviderInterface {
             (window as any).solana.on("connect", () => {
                 resolve((window as any).solana.publicKey.toString())
             })
-        });
+        })
     }
 }
