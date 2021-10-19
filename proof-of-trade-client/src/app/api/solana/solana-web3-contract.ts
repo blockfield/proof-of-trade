@@ -1,7 +1,7 @@
 import * as solanaWeb3 from '@solana/web3.js';
 
 export class SolanaWeb3Contract {
-    private programId = new solanaWeb3.PublicKey('AeXKa3EnCzMY1RFwsVU2THDVLcewK4CiaDcHVUdfVWG7')
+    private programId = new solanaWeb3.PublicKey('CaoE6cNDe5YuqA424Wxg7YaBXoTX1zStpAtwHWhUJtx2')
     private btcPricePK = new solanaWeb3.PublicKey('HovQMDrbAgAYPCmHVSrezcSmkMtXSSUsLDFANExrZh2J')
     private rpcEndpoint = 'https://api.devnet.solana.com'
     private commitment: solanaWeb3.Commitment = 'confirmed'
