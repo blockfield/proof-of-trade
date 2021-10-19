@@ -1,7 +1,7 @@
 import * as solanaWeb3 from '@solana/web3.js';
 
 export class SolanaWeb3Contract {
-    private programId = new solanaWeb3.PublicKey('CaoE6cNDe5YuqA424Wxg7YaBXoTX1zStpAtwHWhUJtx2')
+    private programId = new solanaWeb3.PublicKey('FrNTo1X3gJDff9kqrWL1UzjKSn6NQNsg7TtSWkvgMk43')
     private btcPricePK = new solanaWeb3.PublicKey('HovQMDrbAgAYPCmHVSrezcSmkMtXSSUsLDFANExrZh2J')
     private rpcEndpoint = 'https://api.devnet.solana.com'
     private commitment: solanaWeb3.Commitment = 'confirmed'
@@ -205,11 +205,9 @@ export class SolanaWeb3Contract {
                +-------------------------+
     */
     public async addSignalAction(signal: Signal): Promise<void> {
-    
         let traderAddress = await this.getTraderPda(this.myPK)
         let traderAccount = await this.getTraderAction(this.myPK.toString())
         let signalsPageAddress = await this.getSignalPda(this.myPK, traderAccount.signalsCount / BigInt(10))
-
     
         let bSignalData = Buffer.alloc(121)
     

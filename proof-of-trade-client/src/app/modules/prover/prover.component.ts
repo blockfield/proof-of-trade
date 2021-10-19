@@ -36,7 +36,7 @@ export class ProverComponent implements OnInit {
   private initConnection(): void {
     this.walletService.address$.pipe(
       filter((address: string|null) => !!address),
-      tap((address: string) => { console.log('address', address); this.address = address }),
+      tap((address: string) => { this.address = address }),
       mergeMap((address: string) => from(this.contract.getEmail(address)))
     ).subscribe((email: string) => {
       this.email = email

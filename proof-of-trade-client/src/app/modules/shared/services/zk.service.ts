@@ -56,11 +56,7 @@ export class ZkService {
       [MathHelper.removeDecimalDigitsNumber(price_a), MathHelper.removeDecimalDigitsNumber(price_b), price_now]
     )
 
-    console.log('input', input)
-
     const proof = await this.witnessService.prove(input)
-
-    console.log('input', proof)
     
     await this.contract.addPeriodProof(proof, [ MathHelper.numberToBigInt(price_now) ])
   }
@@ -110,8 +106,6 @@ export class ZkService {
       [price_a, price_b],
       price_now
     )
-
-    console.log('witness', witnessVerify)
 
     return this.witnessService.verify(
       this.assetsService.getVerificationKey(),

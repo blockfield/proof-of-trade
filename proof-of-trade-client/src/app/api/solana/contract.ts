@@ -19,9 +19,12 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
     public async addSignal(hash: string): Promise<void> {
         let prices: bigint[] = []
 
+        let bHash = Buffer.alloc(32)
+        new BN(hash).toBuffer().copy(bHash)
+
         await this.addSignalAction({
             blockNumber: BigInt(0),
-            hash: (new BN(hash)).toBuffer(),
+            hash: bHash,
             prices: prices,
         })
     }
@@ -34,9 +37,21 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
         let signals = await this.getSignalsFromPageAction(address, BigInt(Math.floor(index/10)))
         const signal = signals[index % 10]
 
+        // Remove trailing zeros from the end of buffer
+        let zerosCount = 0
+        for (let i = signal.hash.length - 1; i >= 0; i--) {
+            if (signal.hash[i] !== 0) {
+                break
+            }
+
+            zerosCount += 1
+        }
+
+        let trailedSignalHash = signal.hash.slice(0, signal.hash.length-zerosCount)
+
         return {
             blockNumber: signal.blockNumber,
-            hash: (new BN(signal.hash)).toString(),
+            hash: (new BN(trailedSignalHash)).toString(),
             price: signal.prices[0]
         }
     }
