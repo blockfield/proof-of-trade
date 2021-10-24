@@ -10,6 +10,7 @@ import { SignalModel } from 'src/app/modules/prover/models/signal.model';
 export class ActionComponent implements OnInit {
   @Input() public signal: SignalModel
   @Output() ready = new EventEmitter();
+  @Output() back = new EventEmitter();
 
   public actions: SignalActionEnum[] = actions
   public actionsText = actionsText

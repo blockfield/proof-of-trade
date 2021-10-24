@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import * as solanaWeb3 from '@solana/web3.js';
 import * as pyth from '@pythnetwork/client';
 
-import { ConnectedEvent } from './core/events/connected.event';
 import { PriceService } from './modules/shared/services/price.service';
-import { ToastService } from './modules/shared/services/toast.service';
+import MathHelper from './core/helpers/math.helper';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +12,6 @@ import { ToastService } from './modules/shared/services/toast.service';
 })
 export class AppComponent implements OnInit {
   public title = 'proof-of-trade-client';
-  public connectedEvent: ConnectedEvent|undefined = undefined
   public isAvailable = false
 
   public witness: ArrayBuffer|null = null;
@@ -22,7 +20,6 @@ export class AppComponent implements OnInit {
 
   constructor(
     private priceService: PriceService,
-    private toastr: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -61,25 +58,10 @@ export class AppComponent implements OnInit {
         return
       }
 
-      this.priceService.nextBtcPrice(price.price)
+      this.priceService.nextBtcPrice(MathHelper.decimalDigitsNumber(price.price))
     })
 
     this.priceService.subscribeToBtcPrice()
     pythConnection.start()
-  }
-
-  public onConnected(event: ConnectedEvent): void {
-    this.connectedEvent = event
-
-    if (this.connectedEvent.address) {
-      this.toastr.success(this.connectedEvent.address.slice(0, 4) + '.....' + this.connectedEvent.address.slice(-4), 'Connected to wallet:')
-      return
-    }
-
-    if (this.connectedEvent.error) {
-      this.toastr.error('Connection to wallet failed')
-      console.log(this.connectedEvent.error)
-      return
-    }
   }
 }

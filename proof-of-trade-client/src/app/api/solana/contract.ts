@@ -19,9 +19,12 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
     public async addSignal(hash: string): Promise<void> {
         let prices: bigint[] = []
 
+        let bHash = Buffer.alloc(32)
+        new BN(hash).toBuffer().copy(bHash)
+
         await this.addSignalAction({
             blockNumber: BigInt(0),
-            hash: (new BN(hash)).toBuffer(),
+            hash: bHash,
             prices: prices,
         })
     }
@@ -36,7 +39,7 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
 
         return {
             blockNumber: signal.blockNumber,
-            hash: (new BN(signal.hash)).toString(),
+            hash: this.removeZeros(signal.hash),
             price: signal.prices[0]
         }
     }
@@ -96,12 +99,12 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
             (proof: Proof) => {
                 return {
                     y: proof.pnl,
-                    newBalanceHash: (new BN(proof.newBalanceHash)).toString(),
+                    newBalanceHash: this.removeZeros(proof.newBalanceHash),
                     blockNumber: proof.blockNumber,
                     proof: {
-                        pi_a: proof.pi_a.map(x => (new BN(x)).toString()),
-                        pi_b: proof.pi_b.map(x => x.map(y => (new BN(y)).toString())),
-                        pi_c: proof.pi_c.map(x => (new BN(x)).toString()),
+                        pi_a: proof.pi_a.map(x => this.removeZeros(x)),
+                        pi_b: proof.pi_b.map(x => x.map(y => this.removeZeros(y))),
+                        pi_c: proof.pi_c.map(x => this.removeZeros(x)),
                     },
                     prices: proof.prices,
                 }
@@ -116,12 +119,12 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
             (proof: Proof) => {
                 return {
                     y: proof.pnl,
-                    newBalanceHash: (new BN(proof.newBalanceHash)).toString(),
+                    newBalanceHash: this.removeZeros(proof.newBalanceHash),//(new BN(proof.newBalanceHash)).toString(),
                     blockNumber: proof.blockNumber,
                     proof: {
-                        pi_a: proof.pi_a.map(x => (new BN(x)).toString()),
-                        pi_b: proof.pi_b.map(x => x.map(y => (new BN(y)).toString())),
-                        pi_c: proof.pi_c.map(x => (new BN(x)).toString()),
+                        pi_a: proof.pi_a.map(x => this.removeZeros(x)),
+                        pi_b: proof.pi_b.map(x => x.map(y => this.removeZeros(y))),
+                        pi_c: proof.pi_c.map(x => this.removeZeros(x)),
                     },
                     prices: proof.prices,
                 }
@@ -131,5 +134,21 @@ export class Contract extends SolanaWeb3Contract implements SmartContractInterfa
 
     public async getTimestampByBlockNumber(blockNumber: bigint): Promise<number> {
         return this.getTimestampAction(blockNumber)
+    }
+
+    // todo Maybe this is not right, in Add Signal or Proof use 32 bytes buffer
+    private removeZeros(hash: Buffer): string {
+        let zerosCount = 0
+        for (let i = hash.length - 1; i >= 0; i--) {
+            if (hash[i] !== 0) {
+                break
+            }
+
+            zerosCount += 1
+        }
+
+        let trailedHash = hash.slice(0, hash.length-zerosCount)
+
+        return (new BN(trailedHash)).toString()
     }
 }

@@ -7,7 +7,7 @@ export class SignalModel {
     constructor(
         public id: number = 0,
         public currency: CurrencyEnum|null = null,
-        public amount: number = 0,
+        public amount: number|null = null,
         public nonce: number|null = null,
         public action: SignalActionEnum|null = null,
         public isProved: boolean = false,
@@ -15,7 +15,7 @@ export class SignalModel {
 
     public clear(): void {
         this.currency = null
-        this.amount = 0
+        this.amount = null
         this.nonce = null
         this.action = null
         this.isProved = false

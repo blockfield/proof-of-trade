@@ -1,6 +1,26 @@
 <div class="row h-100 w-100 m-0">
-    <ng-container *ngIf="email === undefined; then loadingTmpl; else loadedTmpl"></ng-container>
+    <ng-container *ngIf="address === undefined; then notConnectedTmpl; else connectedTmpl"></ng-container>
 </div>
+
+<ng-template #notConnectedTmpl>
+    <div class="col m-3 p-3">
+        <app-connection></app-connection>
+    </div>
+</ng-template>
+
+<ng-template #connectedTmpl>
+    <ng-container *ngIf="!address; then errorConnectedTmpl; else successConnectedTemplate"></ng-container>
+</ng-template>
+
+<ng-template #errorConnectedTmpl>
+    <div class="col m-3 p-3">
+        <h2 class="text-center">Error is occured while connecting to Phantom</h2>
+    </div>
+</ng-template>
+
+<ng-template #successConnectedTemplate>
+    <ng-container *ngIf="email === undefined; then loadingTmpl; else loadedTmpl"></ng-container>
+</ng-template>
 
 <ng-template #loadingTmpl>
     <ngx-spinner [bdColor]="'#eeeeee'" [color]="'#000000'"></ngx-spinner>

@@ -8,36 +8,31 @@ import { WalletProviderInterface } from '../interfaces/wallet-provider.interface
   providedIn: 'root'
 })
 export class WalletService {
-  private window: any
-  private address: BehaviorSubject<string|null> = new BehaviorSubject(null)
+  public address$: BehaviorSubject<string|null> = new BehaviorSubject(null)
 
   constructor(
     @Inject('WalletProviderInterface') private walletProvider: WalletProviderInterface
   ) {}
 
   public connect(): Observable<string> {
-    if (!!this.address.getValue()) {
-      return scheduled([this.address.getValue()], asapScheduler)
+    if (!!this.address$.getValue()) {
+      return scheduled([this.address$.getValue()], asapScheduler)
     }
 
     return from(this.walletProvider.connect())
       .pipe(
-        tap((address: string|null) => {
-          if (!address) {
-            return
-          }
-
-          this.address.next(address)
+        filter((address: string|null) => !!address),
+        tap((address: string) => {
+          this.address$.next(address)
         }),
-        filter((address: string|null) => !!address)
       )
   }
 
   public getAddress(): string {
-    if (!this.address.getValue()) {
-      throw new Error('Address is not defined yet')
+    if (!this.address$.getValue()) {
+      return ''
     }
 
-    return this.address.getValue()
+    return this.address$.getValue()
   }
 }

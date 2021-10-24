@@ -1,10 +1,11 @@
-import { Location } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { faArrowAltCircleDown, faArrowAltCircleUp } from '@fortawesome/free-regular-svg-icons';
+import { PriceService } from 'src/app/modules/shared/services/price.service';
 import { WalletService } from 'src/app/modules/shared/services/wallet.service';
 import { menuButtons, menuText } from '../../enums/menu.enum';
 import { ProviderStatusEnum } from '../../enums/provider-status.enum';
-import { ConnectedEvent } from '../../events/connected.event';
+import MathHelper from '../../helpers/math.helper';
 import { ConnectionModel } from '../../models/connection.model';
 import { StateModel } from '../../models/state.model';
 import { MenuService } from '../../services/menu.service';
@@ -15,22 +16,26 @@ import { MenuService } from '../../services/menu.service';
   styleUrls: ['./menu.component.less']
 })
 export class MenuComponent implements OnInit {
-  @Output() connectedEvent = new EventEmitter<ConnectedEvent>();
-
   public menu = menuButtons
   public menuText = menuText
+  public faArrowAltCircleUp = faArrowAltCircleUp
+  public faArrowAltCircleDown = faArrowAltCircleDown
 
   public connectionModel = new ConnectionModel(ProviderStatusEnum.DISCONNECTED)
   public stateModel = new StateModel()
+  public btcPrice: number
+  public lastBtcPrice: number
 
   constructor(
     private menuService: MenuService,
+    private priceService: PriceService,
     private router: Router,
     private walletService: WalletService
   ) { }
 
   ngOnInit(): void {
     this.initMenuState()
+    this.initPrice()
   }
 
   private initMenuState(): void {
@@ -39,6 +44,13 @@ export class MenuComponent implements OnInit {
         this.stateModel = stateModel
       }
     )
+  }
+
+  private initPrice(): void {
+    this.priceService.getBtcPrice().subscribe((price: number) => {
+      this.lastBtcPrice = this.btcPrice
+      this.btcPrice = MathHelper.removeDecimalDigitsNumber(price)
+    })
   }
 
   public goToHome(): void {
@@ -59,11 +71,9 @@ export class MenuComponent implements OnInit {
     this.walletService.connect().subscribe(
       (account: string) => {
         console.log('connect to provider', account)
-        this.connectedEvent.emit(new ConnectedEvent(account, null))
         this.connectionModel.setConnectionStatus(ProviderStatusEnum.CONNECTED)
       },
       (error: Error) => {
-        this.connectedEvent.emit(new ConnectedEvent(null, error))
         this.connectionModel.setConnectionStatus(ProviderStatusEnum.DISCONNECTED)
       }
     )

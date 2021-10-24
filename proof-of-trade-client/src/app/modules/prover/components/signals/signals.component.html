@@ -17,10 +17,10 @@
                 <tr *ngFor="let signal of signals; let i = index">
                     <td class="align-middle text-center">{{i+1}}</td>
                     <td class="align-middle text-center">{{actionsText[signal.action]}}</td>
-                    <td class="align-middle text-center">{{signal.amount}}</td>
+                    <td class="align-middle text-center">{{signal.amount / maxDecimals | number : '1.4-4' | noComma}}</td>
                     <td class="align-middle text-center">{{signal.nonce}}</td>
                     <td class="align-middle text-center">{{currenciesText[signal.currency]}}</td>
-                    <td class="align-middle text-center">{{signal.price | number : '1.0-0' | noComma}}$</td>
+                    <td class="align-middle text-center">{{signal.price/ maxDecimals | number : '1.0-0' | noComma}}$</td>
                     <td class="align-middle text-center">
                         <fa-icon *ngIf="signal.isProved" style="color: darkgreen" [icon]="faCheckCircle" size="2x"></fa-icon>
                         <fa-icon *ngIf="!signal.isProved" style="color: darkred" [icon]="faTimesCircle" size="2x"></fa-icon>

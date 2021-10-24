@@ -1,5 +1,6 @@
 <div class="row my-1">
     <div class="col">
+        <button class="btn btn-link" (click)="backClick()">Back</button>
         <h3>Enter amount:</h3>
     </div>
 </div>
@@ -7,9 +8,19 @@
     <div class="col">
         <form (ngSubmit)="enterAmount()">
             <div class="input-group input-group-lg">
-                <input required type="number" class="form-control text-center" id="sum" name="sum" min="1" [(ngModel)]="signal.amount">
+                <input
+                    required
+                    type="text"
+                    class="form-control text-center"
+                    id="sum"
+                    name="sum"
+                    [dropSpecialCharacters]="false"
+                    [allowNegativeNumbers]="false"
+                    [mask]="'separator.4'"
+                    [(ngModel)]="amount"
+                >
                 <div class="input-group-append">
-                  <button class="btn btn-dark" type="submit" [disabled]="signal.amount === 0">Next...</button>
+                  <button class="btn btn-dark" type="submit" [disabled]="!amount || +amount <= 0">Next...</button>
                 </div>
               </div>
         </form>

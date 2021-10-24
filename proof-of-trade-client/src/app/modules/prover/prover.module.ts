@@ -20,7 +20,7 @@ import { FinalComponent } from './components/signals/components/add-signal/compo
 import { PhantomProvider } from 'src/app/core/wallet-providers/phantom.provider';
 import { Contract } from 'src/app/api/solana/contract';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-
+import { ConnectionComponent } from './components/connection/connection.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +36,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     NonceComponent,
     ActionComponent,
     FinalComponent,
+    ConnectionComponent,
   ],
   imports: [
     CommonModule,
