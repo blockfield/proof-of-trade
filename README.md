@@ -1,9 +1,11 @@
 # Proof Of Trade
 Zero knowledge proving system for historical performance of trader.
 
-Testnet [demo page](https://blockfield.github.io/proof-of-trade/).
+Demo [video](https://youtu.be/u-uGVmvYLSw).
 
+Testnet [page](https://blockfield.github.io/proof-of-trade/).
 Build for [Solana Ignition Hackathon](https://solana.com/ignition).
+
 ## What is it
 One of the most common use cases of cryptocurrency is trading. There are a lot of traders which offer their service - education, signals or delegate trading. How can a person without any trading skills distinguish real professionals from scammers and bull market gurus?
 
